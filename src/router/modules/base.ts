@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-10 10:52:33
+ */
 import Layout from '@/layouts';
 import DashboardIcon from '@/assets/assets-slide-dashboard.svg';
 
@@ -20,6 +26,20 @@ export default [
         name: 'dashboardDetail',
         component: () => import('@/pages/dashboard/detail/index.vue'),
         meta: { title: '统计报表' },
+      },
+    ],
+  },
+  {
+    path: '/demo',
+    name: 'demo',
+    meta: { title: '示例页', icon: 'layers' },
+    component: Layout,
+    children: [
+      {
+        path: 'planBeacon',
+        name: 'planBeacon',
+        component: () => import('@/pages/demo/planBeacon/index.vue'),
+        meta: { title: '信标规划' },
       },
     ],
   },
