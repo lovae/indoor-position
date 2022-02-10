@@ -45,7 +45,7 @@ npm run stylelint
 ## style格式检查与自动修复
 npm run stylelint:fix
 
-## git代码提交规范
+## 使用git commit命令触发commitlint，按规范提交
 git commit
 ```
 
