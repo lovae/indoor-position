@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-02-10 09:55:54
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-10 10:52:33
+ * @LastEditTime: 2022-02-10 17:23:30
  */
 import Layout from '@/layouts';
 import DashboardIcon from '@/assets/assets-slide-dashboard.svg';
@@ -40,6 +40,20 @@ export default [
         name: 'planBeacon',
         component: () => import('@/pages/demo/planBeacon/index.vue'),
         meta: { title: '信标规划' },
+      },
+    ],
+  },
+  {
+    path: '/manageProject',
+    name: 'manageProject',
+    meta: { title: '项目管理', icon: 'server' },
+    component: Layout,
+    children: [
+      {
+        path: 'manageProject',
+        name: 'manageProject',
+        component: () => import('@/pages/manageProject/index.vue'),
+        meta: { title: '项目管理' },
       },
     ],
   },
