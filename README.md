@@ -1,12 +1,15 @@
-
 ### 项目简介
 
 室内定位平台
 
+### 参考
+
+开发参考 https://tdesign.tencent.com/starter/docs/develop
+组件库 https://tdesign.tencent.com/vue-next/getting-started
 
 ### 开发
 
-``` bash
+```bash
 ## 安装依赖
 npm install
 
@@ -41,8 +44,10 @@ npm run stylelint
 
 ## style格式检查与自动修复
 npm run stylelint:fix
-```
 
+## git代码提交规范
+git commit
+```
 
 ### License
 
