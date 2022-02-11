@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-11 09:30:33
+ */
 import axios from 'axios';
 import proxy from '../config/proxy';
 
@@ -13,8 +19,8 @@ const CODE = {
 
 const instance = axios.create({
   baseURL: host,
-  timeout: 1000,
-  withCredentials: true,
+  timeout: 20000,
+  // withCredentials: true,
 });
 
 instance.interceptors.request.use((config) => config);

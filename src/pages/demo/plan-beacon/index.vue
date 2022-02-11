@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-09 18:20:39
+ * @LastEditTime: 2022-02-11 09:34:54
 -->
 <template>
   <div class="map-wrapper">
@@ -39,7 +39,7 @@
           <t-row justify="space-between">
             <t-button theme="default">取消</t-button>
 
-            <t-button>完成</t-button>
+            <t-button @click="fetchData">完成</t-button>
           </t-row>
         </div>
       </div>
@@ -50,6 +50,7 @@
 import { onMounted, ref } from 'vue';
 import { initMap, convertLngLat, initFloor } from '@/utils/mapUtil';
 import { getIndoorMap } from '@/api/indoormap';
+import request from '@/utils/request';
 
 const aimap = window.global?.aimap;
 
@@ -152,6 +153,20 @@ function mapInit() {
     console.log();
   });
 }
+
+const fetchData = async () => {
+  try {
+    // https://indoormap-encrypt.newayz.com/map/indoormaps/v1/31000005/F1.json
+    const url = 'https://indoormap-encrypt.newayz.com/map/indoormaps/v1/31000005/F1.json';
+    // const url = '/map/indoormaps/v1/31000005/F1.json'
+    const res = await request.get(url);
+    console.log(res);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    // 做一些加载状态初始化等操作
+  }
+};
 
 onMounted(() => {
   console.log('加载完');
