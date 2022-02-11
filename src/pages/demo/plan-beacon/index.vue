@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-11 09:34:54
+ * @LastEditTime: 2022-02-11 09:57:42
 -->
 <template>
   <div class="map-wrapper">
@@ -158,7 +158,7 @@ const fetchData = async () => {
   try {
     // https://indoormap-encrypt.newayz.com/map/indoormaps/v1/31000005/F1.json
     const url = 'https://indoormap-encrypt.newayz.com/map/indoormaps/v1/31000005/F1.json';
-    // const url = '/map/indoormaps/v1/31000005/F1.json'
+    // const url = '/map/indoormaps/v1/31000005/F1.json';
     const res = await request.get(url);
     console.log(res);
   } catch (e) {
