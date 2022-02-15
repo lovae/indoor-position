@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-11 09:57:42
+ * @LastEditTime: 2022-02-11 17:56:43
 -->
 <template>
   <div class="map-wrapper">
@@ -39,6 +39,8 @@
           <t-row justify="space-between">
             <t-button theme="default">取消</t-button>
 
+            <t-button @click="getDraw">获取</t-button>
+            <t-button @click="pushData">推送</t-button>
             <t-button @click="fetchData">完成</t-button>
           </t-row>
         </div>
@@ -57,25 +59,25 @@ const aimap = window.global?.aimap;
 const map = ref(null);
 
 // 在地图上新增一个点
-let aimapDrawInstance;
+let drawInstance;
 function initDraw() {
-  if (aimapDrawInstance) return;
+  if (drawInstance) return;
   // 初始化绘制工具
-  aimapDrawInstance = new aimap.Draw({
+  drawInstance = new aimap.Draw({
     displayControlsDefault: true,
     controls: {
       point: true, // 显示标记点控件
       polygon: false, // 显示多边形控件
-      line_string: false, // 显示标记线控件
+      line_string: true, // 显示标记线控件
       circle: false, // 显示标记圆控件
       rectangle: false, // 显示标记矩形控件
     },
   });
   // 添加工具到地图
-  map.value.addControl(aimapDrawInstance);
+  map.value.addControl(drawInstance);
 }
 /* function drawPoint() {
-  // aimapDrawInstance.set(points);
+  // drawInstance.set(points);
   // 绘制完成事件
   map.value.on('draw.create', (event) => {
     console.info('create', event.features[0]); // 输出绘制后的图形
@@ -84,7 +86,7 @@ function initDraw() {
 
 // 获取点位
 function savePoints() {
-  const p = aimapDrawInstance.getAll().features;
+  const p = drawInstance.getAll().features;
   if (p.length) console.log(p);
 }
 
@@ -129,6 +131,9 @@ function mapInit() {
     const filter = ['match', ['get', 'id'], 4558283, 'none', 'visible'];
     map.value.setLayoutProperty('building', 'visibility', filter);
   });
+  map.value.on('click', (e: any) => {
+    console.log(e.lngLat.lng, e.lngLat.lat);
+  });
   map.value.on('click', 'building', (e: any) => {
     // console.log(e);
     const { id } = e.features[0];
@@ -153,6 +158,17 @@ function mapInit() {
     console.log();
   });
 }
+
+const getDraw = () => {
+  const res = drawInstance.getAll().features;
+  console.log(res);
+};
+
+const pushData = () => {
+  console.log(drawInstance);
+  // const item = [121.6041830654936, 31.179804323209552];
+  // const {} = drawInstance.getAll().features;
+};
 
 const fetchData = async () => {
   try {

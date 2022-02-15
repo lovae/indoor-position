@@ -1,72 +1,47 @@
+<!--
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-15 17:59:54
+-->
 <template>
-  <t-form
-    ref="form"
-    :class="['item-container', `login-${type}`]"
-    :data="formData"
-    :rules="FORM_RULES"
-    label-width="0"
-    @submit="onSubmit"
-  >
-    <template v-if="type == 'password'">
-      <t-form-item name="account">
-        <t-input v-model="formData.account" size="large" placeholder="请输入账号：admin">
-          <template #prefix-icon>
-            <t-icon name="user" />
-          </template>
-        </t-input>
-      </t-form-item>
-
-      <t-form-item name="password">
-        <t-input
-          v-model="formData.password"
-          size="large"
-          :type="showPsw ? 'text' : 'password'"
-          clearable
-          placeholder="请输入登录密码：admin"
-        >
-          <template #prefix-icon>
-            <t-icon name="lock-on" />
-          </template>
-          <template #suffix-icon>
-            <t-icon :name="showPsw ? 'browse' : 'browse-off'" @click="showPsw = !showPsw" />
-          </template>
-        </t-input>
-      </t-form-item>
-
-      <div class="check-container remember-pwd">
-        <t-checkbox>记住账号</t-checkbox>
-        <span class="tip">忘记账号？</span>
-      </div>
-    </template>
-
-    <!-- 扫码登陆 -->
-    <template v-else-if="type == 'qrcode'">
-      <div class="tip-container">
-        <span class="tip">请使用微信扫一扫登录</span>
-        <span class="refresh">刷新 <t-icon name="refresh" /> </span>
-      </div>
-      <qrcode-vue value="" :size="192" level="H" />
-    </template>
-
-    <!-- 手机号登陆 -->
-    <template v-else>
-      <t-form-item class="verification-code" name="verifyCode">
-        <t-input v-model="formData.verifyCode" size="large" placeholder="请输入验证码" />
-        <t-button variant="outline" :disabled="countDown > 0" @click="handleCounter">
-          {{ countDown == 0 ? '发送验证码' : `${countDown}秒后可重发` }}
-        </t-button>
-      </t-form-item>
-    </template>
-
-    <t-form-item v-if="type !== 'qrcode'" class="btn-container">
-      <t-button block size="large" type="submit"> 登录 </t-button>
+  <t-form ref="form" class="item-container" :data="formData" :rules="FORM_RULES" label-width="0" @submit="onSubmit">
+    <t-radio-group v-model="formData.type" class="login-type-radio" size="large" variant="default-filled">
+      <t-radio-button value="standard"> 账号密码登录 </t-radio-button>
+      <t-radio-button value="ldap"> LDAP登录 </t-radio-button>
+    </t-radio-group>
+    <t-form-item name="username">
+      <t-input v-model="formData.username" size="large" clearable placeholder="请输入账号">
+        <template #prefix-icon>
+          <t-icon name="user" />
+        </template>
+      </t-input>
     </t-form-item>
 
-    <div class="switch-container">
-      <span v-if="type !== 'password'" class="tip" @click="switchType('password')">使用账号密码登录</span>
-      <span v-if="type !== 'qrcode'" class="tip" @click="switchType('qrcode')">使用微信扫码登录</span>
-      <span v-if="type !== 'phone'" class="tip" @click="switchType('phone')">使用手机号登录</span>
+    <t-form-item name="password">
+      <t-input
+        v-model="formData.password"
+        size="large"
+        :type="showPsw ? 'text' : 'password'"
+        clearable
+        placeholder="请输入密码"
+      >
+        <template #prefix-icon>
+          <t-icon name="lock-on" />
+        </template>
+        <template #suffix-icon>
+          <t-icon :name="showPsw ? 'browse' : 'browse-off'" @click="showPsw = !showPsw" />
+        </template>
+      </t-input>
+    </t-form-item>
+
+    <div class="check-container remember-pwd">
+      <t-checkbox v-model="checked">记住账号</t-checkbox>
     </div>
+
+    <t-form-item class="btn-container">
+      <t-button block size="large" type="submit"> 登录 </t-button>
+    </t-form-item>
   </t-form>
 </template>
 
@@ -74,53 +49,46 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import QrcodeVue from 'qrcode.vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { useCounter } from '@/hooks';
+import md5 from 'md5';
 
 const INITIAL_DATA = {
-  phone: '',
-  account: 'admin',
-  password: 'admin',
-  verifyCode: '',
-  checked: false,
+  username: 'zed.wu',
+  password: 'WZwzd23dzw',
+  type: 'standard',
 };
 
 const FORM_RULES = {
-  phone: [{ required: true, message: '手机号必填', type: 'error' }],
-  account: [{ required: true, message: '账号必填', type: 'error' }],
+  username: [{ required: true, message: '账号必填', type: 'error' }],
   password: [{ required: true, message: '密码必填', type: 'error' }],
-  verifyCode: [{ required: true, message: '验证码必填', type: 'error' }],
 };
 
 export default defineComponent({
-  components: { QrcodeVue },
+  components: {},
   setup() {
-    const type = ref('password');
-
     const formData = ref({ ...INITIAL_DATA });
     const showPsw = ref(false);
-
-    const [countDown, handleCounter] = useCounter();
-
-    const switchType = (val: string) => {
-      type.value = val;
-    };
 
     const router = useRouter();
     const store = useStore();
 
+    const checked = ref(false);
+
     const onSubmit = async ({ validateResult }) => {
       if (validateResult === true) {
         try {
-          await store.dispatch('user/login', formData.value);
+          const params = { ...formData.value };
+          const { type, password } = formData.value;
+          if (type === 'standard') {
+            params.password = md5(password);
+          }
+          await store.dispatch('user/login', params);
           MessagePlugin.success('登陆成功');
           router.push({
             path: '/dashboard/base',
           });
         } catch (e) {
-          console.log(e);
-          MessagePlugin.error(e.message);
+          // MessagePlugin.error(e.message);
         }
       }
     };
@@ -129,10 +97,7 @@ export default defineComponent({
       FORM_RULES,
       formData,
       showPsw,
-      type,
-      switchType,
-      countDown,
-      handleCounter,
+      checked,
       onSubmit,
     };
   },

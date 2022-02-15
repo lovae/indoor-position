@@ -1,0 +1,51 @@
+// 批量间距
+@spacing-base-size: 8px;
+.spacing-types() {
+  m: margin;
+  p: padding;
+}
+.spacing-direction() {
+  t: top;
+  r: right;
+  b: bottom;
+  l: left;
+}
+.spacing-sizes() {
+  0: 0;
+  s: 0.5;
+  l: 1.5;
+  1: 1;
+  2: 2;
+  3: 3;
+  4: 4;
+  5: 5;
+  6: 6;
+  7: 7;
+  8: 8;
+  9: 9;
+  10: 10;
+}
+each(.spacing-types(),.(@type,@typeKey){
+  each(.spacing-sizes(),.(@size,@sizeKey){
+    // 四周间距 m/p-0/1/2/3/4/5
+    .@{typeKey}-@{sizeKey}{
+      @{type}: @size * @spacing-base-size
+    };
+    // 横向间距 mx/px-0/1/2/3/4/5
+    .@{typeKey}x-@{sizeKey}{
+      @{type}-left:@size * @spacing-base-size;
+      @{type}-right:@size * @spacing-base-size;
+    };
+    // 纵向间距 my/py-0/1/2/3/4/5
+    .@{typeKey}y-@{sizeKey}{
+      @{type}-top:@size * @spacing-base-size;
+      @{type}-bottom:@size * @spacing-base-size;
+    };
+    // 单向间距 mt/mr/mb/ml/pt/pr/pb/pl-0/1/2/3/4/5
+    each(.spacing-direction(),.(@dir,@dirKey){
+      .@{typeKey}@{dirKey}-@{sizeKey}{
+        @{type}-@{dir}: @size * @spacing-base-size;
+      };
+    });
+  });
+});

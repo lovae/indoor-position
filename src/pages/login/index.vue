@@ -1,3 +1,9 @@
+<!--
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-14 09:13:57
+-->
 <template>
   <div class="login-wrapper">
     <login-header />
@@ -19,7 +25,7 @@
       <tdesign-setting />
     </div>
 
-    <footer class="copyright">Copyright @ 2021-2022 Tencent. All Rights Reserved</footer>
+    <footer class="copyright">Copyright @ 2021-2022 Wayz All Rights Reserved</footer>
   </div>
 </template>
 <script lang="ts">

@@ -54,19 +54,19 @@
     </template>
 
     <t-form-item class="check-container" name="checked">
-      <t-checkbox v-model="formData.checked">我已阅读并同意 </t-checkbox> <span>TDesign服务协议</span> 和
-      <span>TDesign 隐私声明</span>
+      <t-checkbox v-model="formData.checked">我已阅读并同意 </t-checkbox> <span>Wayz服务协议</span> 和
+      <span>Wayz隐私声明</span>
     </t-form-item>
 
     <t-form-item>
       <t-button block size="large" type="submit"> 注册 </t-button>
     </t-form-item>
 
-    <div class="switch-container">
+    <!-- <div class="switch-container">
       <span class="tip" @click="switchType(type == 'phone' ? 'email' : 'phone')">{{
         type == 'phone' ? '使用邮箱注册' : '使用手机号注册'
       }}</span>
-    </div>
+    </div> -->
   </t-form>
 </template>
 
