@@ -1,6 +1,7 @@
 import { MessagePlugin } from 'tdesign-vue-next';
 import NProgress from 'nprogress'; // progress bar
 import 'nprogress/nprogress.css'; // progress bar style
+import { ROLES } from '@/config/global';
 
 import store from '@/store';
 import router from '@/router';
@@ -25,7 +26,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     const roles = store.getters['user/roles'];
-    if (roles && roles.length > 0) {
+    if (roles && ROLES.includes(roles)) {
       next();
     } else {
       try {

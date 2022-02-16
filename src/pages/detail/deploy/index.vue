@@ -83,7 +83,7 @@ import { BASE_INFO_DATA, TABLE_COLUMNS } from './constants';
 import { prefix } from '@/config/global';
 import Card from '@/components/card/index.vue';
 import { ResDataType } from '@/interface';
-import request from '@/utils/request';
+import request from '@/service/request';
 
 echarts.use([
   TitleComponent,

@@ -4,7 +4,7 @@ export type ColorToken = Record<string, string>;
 export type ColorSeries = Record<string, ColorToken>;
 
 export const defaultLightColor = [
-  '#0052d9',
+  '#5284e4',
   '#0594fa',
   '#00a870',
   '#ebb105',
@@ -79,17 +79,17 @@ export const NEUTRAL_GREY_TOKEN: ColorToken = {
 
 export const COLOR_TOKEN: ColorSeries = {
   DEFAULT: {
-    '@brand-color': '#0052D9',
-    '@brand-color-1': '#e0ebff',
-    '@brand-color-2': '#c0d8ff',
-    '@brand-color-3': '#a1c4ff',
-    '@brand-color-4': '#81b1ff',
-    '@brand-color-5': '#5f9bff',
-    '@brand-color-6': '#3d87ff',
-    '@brand-color-7': '#176eff',
-    '@brand-color-8': '#0052D9',
-    '@brand-color-9': '#0048cd',
-    '@brand-color-10': '#0035b5',
+    '@brand-color': '#4556fe',
+    '@brand-color-1': '#d9ddff',
+    '@brand-color-2': '#bdc3ff',
+    '@brand-color-3': '#afb6fe',
+    '@brand-color-4': '#959eff',
+    '@brand-color-5': '#707dff',
+    '@brand-color-6': '#6573fe',
+    '@brand-color-7': '#5564fc',
+    '@brand-color-8': '#4556fe',
+    '@brand-color-9': '#2539fe',
+    '@brand-color-10': '#0116e8',
   },
 
   CYAN: {

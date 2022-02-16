@@ -65,44 +65,18 @@
 
 .item-container {
   width: 400px;
-  margin-top: 48px;
+  margin-top: @spacer-2;
+  padding: @spacer-2;
+  border-radius: 6px;
+  border: 1px solid rgba(#fff, 0.5);
+  backdrop-filter: blur(4px) brightness(95%);
+  box-shadow: 0 0 16px rgba(#000, 0.15);
 
-  &.login-qrcode {
-    .tip-container {
-      width: 192px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-
-      .tip {
-        color: @text-color-primary;
-      }
-
-      .refresh {
-        display: flex;
-        align-items: center;
-        color: @brand-color;
-
-        .t-icon {
-          font-size: 14px;
-          margin-left: 4px;
-        }
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-
-    .bottom-container {
-      margin-top: 32px;
-    }
-  }
-
-  &.login-phone {
-    .bottom-container {
-      margin-top: 66px;
+  .login-type-radio {
+    margin-bottom: @spacer-2;
+    display: flex;
+    .t-radio-button {
+      width: 100%;
     }
   }
 
@@ -190,7 +164,7 @@
 
 .copyright {
   font-size: 14px;
-  position:absolute;
+  position: absolute;
   left: 5%;
   bottom: 64px;
   color: @text-color-secondary;
@@ -198,6 +172,6 @@
 
 @media screen and (max-height: 700px) {
   .copyright {
-    display:none
+    display: none;
   }
 }

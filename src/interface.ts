@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-10 10:50:12
+ */
 import STYLE_CONFIG from '@/config/style';
 
 export interface ResDataType {
@@ -36,4 +42,40 @@ export interface NotificationItem {
   collected: boolean;
   date: string;
   quality: 'high' | 'low' | 'middle';
+}
+interface Geometry {
+  type: string;
+  coordinates: number[][][];
+}
+
+interface Properties2 {
+  id: string;
+  // eslint-disable-next-line camelcase
+  mall_id: string;
+  name: string;
+  type: string;
+  color: string;
+  height: number;
+}
+
+export interface Feature {
+  type: string;
+  properties: Properties2;
+  geometry: Geometry;
+}
+
+interface Properties {
+  name: string;
+}
+
+interface Crs {
+  type: string;
+  properties: Properties;
+}
+
+export interface GeoJson {
+  type: string;
+  name: string;
+  crs: Crs;
+  features: Feature[];
 }

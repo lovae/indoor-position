@@ -1,0 +1,30 @@
+@import '@/style/variables';
+
+.map-wrapper {
+  position: relative;
+}
+#map {
+  height: 800px;
+  width: 100%;
+  background: @bg-color-container;
+  margin-bottom: @spacer-3;
+  border-radius: @border-radius;
+}
+.plan-box {
+  position: absolute;
+  z-index: @z-index-affix;
+  left: 20px;
+  top: 40px;
+  background: @bg-color-container;
+  box-shadow: @shadow-2;
+  border-radius: @border-radius;
+  overflow: hidden;
+  width: 360px;
+  .steps {
+    padding: @spacer-1 @spacer-2;
+    background-color: @bg-color-page;
+  }
+  .content {
+    padding: @spacer-1 @spacer-2;
+  }
+}

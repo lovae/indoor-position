@@ -3,8 +3,8 @@
     <card class="list-card-container">
       <t-row justify="space-between">
         <div class="left-operation-container">
-          <t-button @click="handleSetupContract"> 新建合同 </t-button>
-          <t-button variant="base" theme="default" :disabled="!selectedRowKeys.length"> 导出合同 </t-button>
+          <t-button @click="handleSetupContract"> 新建项目 </t-button>
+          <t-button variant="base" theme="default" :disabled="!selectedRowKeys.length"> 导出项目 </t-button>
           <p v-if="!!selectedRowKeys.length" class="selected-count">已选{{ selectedRowKeys.length }}项</p>
         </div>
         <t-input v-model="searchValue" class="search-input" placeholder="请输入你需要搜索的内容" clearable>
@@ -57,7 +57,7 @@
 
     <t-dialog
       v-model:visible="confirmVisible"
-      header="确认删除当前所选合同？"
+      header="确认删除当前所选项目？"
       :body="confirmBody"
       :on-cancel="onCancel"
       @confirm="onConfirmDelete"
@@ -119,7 +119,7 @@ export default defineComponent({
     const confirmBody = computed(() => {
       if (deleteIdx.value > -1) {
         const { name } = data.value[deleteIdx.value];
-        return `删除后，${name}的所有合同信息将被清空，且无法恢复`;
+        return `删除后，${name}的所有项目信息将被清空，且无法恢复`;
       }
       return '';
     });
