@@ -2,12 +2,12 @@
  * @Author: Zed.wu
  * @Date: 2022-02-15 17:22:18
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-15 18:06:10
+ * @LastEditTime: 2022-02-16 11:45:04
  */
 import { TOKEN_NAME, USER_ID } from '@/config/global';
 import { getInfo, login } from '@/service/api/user/index';
 
-const InitUserInfo = {};
+const InitUserInfo = null;
 
 // 定义的state初始值
 const state = {
@@ -46,8 +46,9 @@ const getters = {
     return state.userId;
   },
   roles: () => {
-    // return state.userInfo?.role?.name;
-    return ['ALL_ROUTERS'];
+    // 在这里可以控制角色权限，配合src/permission.ts
+    return state.userInfo?.role?.name;
+    // return ['ALL_ROUTERS'];
   },
 };
 
@@ -57,28 +58,14 @@ const actions = {
     // console.log(res);
     commit('setToken', res.token);
     commit('setUserId', res.userId);
-    const info = await getInfo();
+    // const info = await getInfo();
     // console.log(info[0]);
-    commit('setUserInfo', info[0]);
+    // commit('setUserInfo', info[0]);
   },
-  /* async getUserInfo({ commit, state }) {
-    const mockRemoteUserInfo = async (token) => {
-      if (token === 'main_token') {
-        return {
-          name: 'td_main',
-          roles: ['ALL_ROUTERS'],
-        };
-      }
-      return {
-        name: 'td_dev',
-        roles: ['userIndex', 'dashboardBase', 'login'],
-      };
-    };
-
-    const res = await mockRemoteUserInfo(state.token);
-
-    commit('setUserInfo', res);
-  }, */
+  async getUserInfo({ commit }) {
+    const res = await getInfo();
+    commit('setUserInfo', res[0]);
+  },
   async logout({ commit }) {
     commit('removeToken');
     commit('removeUserId');

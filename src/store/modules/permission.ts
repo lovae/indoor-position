@@ -1,4 +1,5 @@
 import router, { asyncRouterList, page404 } from '@/router';
+import { ROLES } from '@/config/global';
 
 function filterPermissionsRouters(routes, roles) {
   const res = [];
@@ -43,7 +44,7 @@ const actions = {
     let accessedRouters;
 
     // special token
-    if (roles.includes('ALL_ROUTERS')) {
+    if (roles && ROLES.includes(roles)) {
       accessedRouters = asyncRouterList;
     } else {
       accessedRouters = filterPermissionsRouters(asyncRouterList, roles);

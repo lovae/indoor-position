@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-11 17:56:43
+ * @LastEditTime: 2022-02-16 11:08:15
 -->
 <template>
   <div class="map-wrapper">
@@ -51,8 +51,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { initMap, convertLngLat, initFloor } from '@/utils/mapUtil';
-import { getIndoorMap } from '@/api/indoormap';
-import request from '@/utils/request';
+import { getIndoorMap } from '@/service/api/indoormap';
+import request from '@/service/request';
 
 const aimap = window.global?.aimap;
 
