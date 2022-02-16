@@ -64,7 +64,7 @@ import { SearchIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import Card from './components/Card.vue';
 import DialogForm from './components/DialogForm.vue';
-import request from '@/utils/request';
+import request from '@/service/request';
 import { ResDataType } from '@/interface';
 
 const INITIAL_DATA = {

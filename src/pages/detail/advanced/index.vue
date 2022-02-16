@@ -113,7 +113,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { prefix } from '@/config/global';
 import { BASE_INFO_DATA, TABLE_COLUMNS_DATA, PRODUCT_LIST } from './constants';
-import request from '@/utils/request';
+import request from '@/service/request';
 import { ResDataType } from '@/interface';
 
 import Card from '@/components/card/index.vue';

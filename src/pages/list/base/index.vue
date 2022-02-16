@@ -74,7 +74,7 @@ import { CONTRACT_STATUS, CONTRACT_TYPES, CONTRACT_PAYMENT_TYPES } from '@/const
 import Trend from '@/components/trend/index.vue';
 import Card from '@/components/card/index.vue';
 import { ResDataType } from '@/interface';
-import request from '@/utils/request';
+import request from '@/service/request';
 
 import { COLUMNS } from './constants';
 

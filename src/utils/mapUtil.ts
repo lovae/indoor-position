@@ -3,7 +3,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:26:05
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-09 16:45:33
+ * @LastEditTime: 2022-02-16 15:24:44
  */
 import { cloneDeep } from 'lodash';
 import { GeoJson } from '@/interface';
@@ -97,4 +97,70 @@ export function initFloor(map, data, style) {
     map,
   });
   return polygon;
+}
+
+// 按数据长度计算时长
+const countDuration = (length: number) => {
+  if (length <= 0) return 2;
+  let weight;
+  if (length < 10) {
+    weight = 2;
+  } else if (length < 30) {
+    weight = 3;
+  } else if (length < 100) {
+    weight = 4;
+  } else if (length < 500) {
+    weight = 5;
+  } else if (length < 1000) {
+    weight = 6;
+  } else {
+    weight = 7;
+  }
+  return Math.max(Number((length / weight).toFixed(1)), 2);
+};
+
+export function initTrack(map, coordinates, styles = {}, spatialReference = 'gcj02', length = 0) {
+  // const color = '#1890ff'
+  const duration = countDuration(length);
+  console.log(duration, countDuration(1000));
+  return new aimap.TrackLayer({
+    dataType: 'geojson',
+    map,
+    data: {
+      coordinates,
+    },
+    animation: {
+      repeat: true,
+      duration,
+      autoplay: false,
+    },
+    spatialReference,
+    minZoom: 3,
+    maxZoom: 23,
+    style: {
+      'line-color': '#09e5ff',
+      'line-width': 3,
+      trackPoint: {
+        'circle-color': '#1890ff',
+        'circle-radius': 6,
+      },
+      start: {
+        'circle-color': '#2eee71',
+        'circle-radius': 6,
+        'text-field': '起点',
+        'text-size': 12,
+        'text-color': '#000',
+        'text-anchor': 'right',
+      },
+      end: {
+        'circle-color': '#ee4c3c',
+        'circle-radius': 6,
+        'text-field': '终点',
+        'text-size': 12,
+        'text-color': '#000',
+        'text-anchor': 'left',
+      },
+      ...styles,
+    },
+  });
 }
