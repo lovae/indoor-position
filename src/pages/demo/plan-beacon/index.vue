@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-16 15:27:36
+ * @LastEditTime: 2022-02-17 18:45:54
 -->
 <template>
   <div class="map-wrapper">
@@ -34,13 +34,19 @@
             </t-button>
           </t-tooltip>
         </div>-->
-
+        <!-- <t-input-number v-model="spacing"></t-input-number> -->
+        <t-form ref="form" label-width="60" :colon="true">
+          <t-form-item label="间距">
+            <t-input-number v-model="spacing" placeholder="请输入间距"></t-input-number>
+          </t-form-item>
+        </t-form>
         <div class="mt-2 mb-1">
           <t-row justify="space-between">
-            <t-button theme="default">取消</t-button>
+            <!-- <t-button theme="default">取消</t-button> -->
 
-            <t-button @click="getDraw">获取</t-button>
-            <t-button @click="pushData">推送</t-button>
+            <t-button @click="getPoint">生成</t-button>
+            <t-button theme="danger" @click="clearPoint">清空</t-button>
+            <t-button @click="getPointData">获取实例</t-button>
             <t-button @click="fetchData">完成</t-button>
           </t-row>
         </div>
@@ -49,15 +55,17 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
-import { initMap, convertLngLat, initFloor } from '@/utils/mapUtil';
+import { onMounted, ref, nextTick, Ref } from 'vue';
+import { initMap, convertLngLat, initFloor, aryToPoints, initMarker, aryToPointData } from '@/utils/mapUtil';
 import { getIndoorMap } from '@/service/api/indoormap';
 import request from '@/service/request';
 
 const aimap = window.global?.aimap;
 
-const map = ref(null);
+// 间距控制
+const spacing: Ref<number> = ref(7);
 
+const map = ref(null);
 // 在地图上新增一个点
 let drawInstance;
 function initDraw() {
@@ -106,6 +114,51 @@ const densityOpt = [
   },
 ]; */
 
+// 规划点位展示
+const pointLayer = ref(null);
+function initPoint() {
+  pointLayer.value = initMarker(map.value, []);
+}
+function clearPoint() {
+  pointLayer.value.setData([]);
+}
+
+// 点图数据
+// 转换后
+const pointData = ref([]);
+const getPoint = () => {
+  const res = drawInstance.getAll().features;
+  if (!res.length) return;
+  // console.log(res);
+  // 直接获取最后一个直线
+  const {
+    id,
+    geometry: { type, coordinates },
+  } = res[res.length - 1];
+  // 必须
+  if (type !== 'LineString') return;
+  const pointAry = aryToPoints(coordinates[0], coordinates[1]);
+  pointData.value.push(...aryToPointData(pointAry));
+  drawInstance.set({
+    type: 'FeatureCollection',
+    features: pointData.value,
+  });
+  // pointData.value.push(...aryToData(pointAry));
+  // pointLayer.value.setData(pointData.value);
+  drawInstance.delete(id);
+};
+
+// 获取现在的数据
+// const pointArray = ref([]);
+const getPointData = () => {
+  const res = drawInstance.getAll().features;
+  console.log(drawInstance, res);
+  // console.log(JSON.stringify(pointArray.value));
+  // const item = [121.6041830654936, 31.179804323209552];
+  // const {} = drawInstance.getAll().features;
+};
+
+// 楼层平面图
 const buildingId = ref('31000005');
 const floor = ref('F1');
 const floorLayer = ref(null);
@@ -119,7 +172,9 @@ async function loadFloorLayer() {
     center: geoData.center,
     zoom: 19,
   });
+  // 初始化其他图层
   initDraw();
+  initPoint();
 }
 
 function mapInit() {
@@ -159,17 +214,6 @@ function mapInit() {
   });
 }
 
-const getDraw = () => {
-  const res = drawInstance.getAll().features;
-  console.log(res);
-};
-
-const pushData = () => {
-  console.log(drawInstance);
-  // const item = [121.6041830654936, 31.179804323209552];
-  // const {} = drawInstance.getAll().features;
-};
-
 const fetchData = async () => {
   try {
     // https://indoormap-encrypt.newayz.com/map/indoormaps/v1/31000005/F1.json
@@ -186,7 +230,9 @@ const fetchData = async () => {
 
 onMounted(() => {
   console.log('加载完');
-  mapInit();
+  nextTick(() => {
+    mapInit();
+  });
   console.log(map.value);
 });
 </script>

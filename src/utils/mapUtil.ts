@@ -3,9 +3,10 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:26:05
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-16 15:24:44
+ * @LastEditTime: 2022-02-17 18:45:44
  */
 import { cloneDeep } from 'lodash';
+import { nanoid } from 'nanoid';
 import { GeoJson } from '@/interface';
 
 const aimap = window.global?.aimap;
@@ -45,6 +46,7 @@ export function initMap(container = 'map', config?) {
   return map;
 }
 
+// 室内图经纬度转换
 export function convertLngLat(geo: GeoJson) {
   const data = cloneDeep(geo);
   let center;
@@ -164,3 +166,114 @@ export function initTrack(map, coordinates, styles = {}, spatialReference = 'gcj
     },
   });
 }
+
+// 海量点图
+export function initMarker(map, data, styles = {}) {
+  return new aimap.MassMarkerLayer({
+    map,
+    data,
+    // 图标配置
+    /* images: [
+      {
+        id: 'marker',
+        type: 'png',
+        url: '/marker.png'
+      }
+    ], */
+    style: {
+      // 'text-field': '{name}',
+      'text-color': '#e3e3ff',
+      'text-anchor': 'bottom',
+      'text-offset': [0, 2],
+      'icon-anchor': 'bottom',
+      'icon-image': ['get', 'icon'],
+      'icon-size': 0.4,
+      'circle-color': '#09e5ff',
+      'circle-radius': 6,
+      'circle-stroke-color': '#09e5ff',
+      'circle-stroke-opacity': 0.5,
+      'circle-stroke-width': 1,
+      blink: {
+        'circle-color': '#09e5ff',
+        'circle-radius': 40,
+        visibility: 'none',
+      },
+      ...styles,
+    },
+  });
+}
+
+// 两点按间距划分，返回计算后的经纬度数组
+// pre第一个点，next第二个点，s间距（米）
+export function aryToPoints(pre: number[], next: number[], s = 7) {
+  // 结果数组
+  const res = [];
+  const dis = aimap.GeometryUtil.distance(pre, next);
+  console.log(dis);
+  const lng1 = pre[0];
+  const lat1 = pre[1];
+  const lng2 = next[0];
+  const lat2 = next[1];
+  // 距离过小
+  if (dis < s) {
+    res.push(pre);
+    return;
+  }
+  // 能取的段数
+  const n = Math.floor(dis / s);
+  // 经度相等直线
+  if (lng1 === lng2) {
+    for (let j = 0; j <= n; j++) {
+      res.push([lng1, (j * s * (lat2 - lat1)) / dis + lat1]);
+    }
+  } else if (lat1 === lat2) {
+    // 纬度相等直线
+    for (let j = 0; j <= n; j++) {
+      res.push([(j * s * (lng2 - lng1)) / dis + lng1, lat2]);
+    }
+    return;
+  } else {
+    // 斜线
+    for (let j = 0; j <= n; j++) {
+      res.push([((j * s) / dis) * (lng2 - lng1) + lng1, ((j * s) / dis) * (lat2 - lat1) + lat1]);
+    }
+  }
+  // 不能被整除就再放入最后一位
+  if (dis % s !== 0) {
+    res.push(next);
+  }
+  // console.log(res);
+  // console.log(JSON.stringify(res));
+  // eslint-disable-next-line consistent-return
+  return res;
+}
+
+// 数组转geojson Data
+export function aryToMarksData(ary: number[][]) {
+  const res = [];
+  ary.forEach((i) => {
+    res.push({
+      coordinates: i,
+      id: nanoid(),
+    });
+  });
+  return res;
+}
+export function aryToPointData(ary: number[][]) {
+  const res = [];
+  ary.forEach((i) => {
+    res.push({
+      type: 'Feature',
+      geometry: {
+        coordinates: i,
+        type: 'Point',
+      },
+      id: nanoid(),
+      properties: {},
+    });
+  });
+  return res;
+}
+
+// 点位数据转数组
+// export function pointDataToAry(ary) {}
