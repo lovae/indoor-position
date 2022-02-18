@@ -3,7 +3,7 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:26:05
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-17 18:45:44
+ * @LastEditTime: 2022-02-18 11:35:31
  */
 import { cloneDeep } from 'lodash';
 import { nanoid } from 'nanoid';
@@ -166,7 +166,22 @@ export function initTrack(map, coordinates, styles = {}, spatialReference = 'gcj
     },
   });
 }
-
+export function initDraw(map, controls = {}) {
+  // 初始化绘制工具
+  const drawInstance = new aimap.Draw({
+    displayControlsDefault: true,
+    controls: {
+      point: true, // 显示标记点控件
+      polygon: false, // 显示多边形控件
+      line_string: true, // 显示标记线控件
+      circle: false, // 显示标记圆控件
+      rectangle: false, // 显示标记矩形控件
+      ...controls,
+    },
+  });
+  map.addControl(drawInstance);
+  return drawInstance;
+}
 // 海量点图
 export function initMarker(map, data, styles = {}) {
   return new aimap.MassMarkerLayer({
@@ -205,7 +220,7 @@ export function initMarker(map, data, styles = {}) {
 
 // 两点按间距划分，返回计算后的经纬度数组
 // pre第一个点，next第二个点，s间距（米）
-export function aryToPoints(pre: number[], next: number[], s = 7) {
+export function lineToPoints(pre: number[], next: number[], s = 7) {
   // 结果数组
   const res = [];
   const dis = aimap.GeometryUtil.distance(pre, next);
@@ -238,14 +253,14 @@ export function aryToPoints(pre: number[], next: number[], s = 7) {
       res.push([((j * s) / dis) * (lng2 - lng1) + lng1, ((j * s) / dis) * (lat2 - lat1) + lat1]);
     }
   }
-  // 不能被整除就再放入最后一位
-  if (dis % s !== 0) {
+  // 余数大于0.5s就再放入最后一位
+  if (dis % s > 0.5 * s) {
     res.push(next);
   }
   // console.log(res);
   // console.log(JSON.stringify(res));
   // eslint-disable-next-line consistent-return
-  return res;
+  return { dis, ary: res };
 }
 
 // 数组转geojson Data

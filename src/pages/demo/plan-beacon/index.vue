@@ -2,12 +2,10 @@
  * @Author: Zed.wu
  * @Date: 2022-01-10 18:25:45
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-17 18:45:54
+ * @LastEditTime: 2022-02-18 15:38:08
 -->
 <template>
-  <div class="map-wrapper">
-    <div id="map"></div>
-
+  <div id="map" v-resize="onMapResize">
     <div class="plan-box">
       <div class="steps">信标规划</div>
 
@@ -35,10 +33,12 @@
           </t-tooltip>
         </div>-->
         <!-- <t-input-number v-model="spacing"></t-input-number> -->
-        <t-form ref="form" label-width="60" :colon="true">
-          <t-form-item label="间距">
-            <t-input-number v-model="spacing" placeholder="请输入间距"></t-input-number>
+        <t-form ref="form" :colon="true">
+          <t-form-item label="间隔">
+            <t-input-number v-model="spacing" placeholder="请输入间隔"></t-input-number>
+            <div class="ml-2">米</div>
           </t-form-item>
+          <t-form-item label="直线长度"> {{ distance }} 米 </t-form-item>
         </t-form>
         <div class="mt-2 mb-1">
           <t-row justify="space-between">
@@ -56,38 +56,25 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, nextTick, Ref } from 'vue';
-import { initMap, convertLngLat, initFloor, aryToPoints, initMarker, aryToPointData } from '@/utils/mapUtil';
+import { initMap, convertLngLat, initFloor, lineToPoints, initMarker, aryToPointData, initDraw } from '@/utils/mapUtil';
 import { getIndoorMap } from '@/service/api/indoormap';
 import request from '@/service/request';
 
-const aimap = window.global?.aimap;
-
 // 间距控制
 const spacing: Ref<number> = ref(7);
+const distance: Ref<number> = ref(0);
 
-const map = ref(null);
-// 在地图上新增一个点
+let map;
+// 初始化绘制工具
 let drawInstance;
-function initDraw() {
+function initDrawTool() {
   if (drawInstance) return;
-  // 初始化绘制工具
-  drawInstance = new aimap.Draw({
-    displayControlsDefault: true,
-    controls: {
-      point: true, // 显示标记点控件
-      polygon: false, // 显示多边形控件
-      line_string: true, // 显示标记线控件
-      circle: false, // 显示标记圆控件
-      rectangle: false, // 显示标记矩形控件
-    },
-  });
-  // 添加工具到地图
-  map.value.addControl(drawInstance);
+  drawInstance = initDraw(map);
 }
 /* function drawPoint() {
   // drawInstance.set(points);
   // 绘制完成事件
-  map.value.on('draw.create', (event) => {
+  map.on('draw.create', (event) => {
     console.info('create', event.features[0]); // 输出绘制后的图形
   });
 }
@@ -115,17 +102,19 @@ const densityOpt = [
 ]; */
 
 // 规划点位展示
-const pointLayer = ref(null);
+let pointLayer;
 function initPoint() {
-  pointLayer.value = initMarker(map.value, []);
+  if (pointLayer) return;
+  pointLayer = initMarker(map, []);
 }
 function clearPoint() {
-  pointLayer.value.setData([]);
+  pointLayer.setData([]);
+  drawInstance.deleteAll();
 }
 
 // 点图数据
 // 转换后
-const pointData = ref([]);
+const pointData = [];
 const getPoint = () => {
   const res = drawInstance.getAll().features;
   if (!res.length) return;
@@ -135,15 +124,16 @@ const getPoint = () => {
     id,
     geometry: { type, coordinates },
   } = res[res.length - 1];
-  // 必须
+  // 必须是直线
   if (type !== 'LineString') return;
-  const pointAry = aryToPoints(coordinates[0], coordinates[1]);
-  pointData.value.push(...aryToPointData(pointAry));
+  const { dis, ary } = lineToPoints(coordinates[0], coordinates[1]);
+  distance.value = dis;
+  pointData.push(...aryToPointData(ary));
   drawInstance.set({
     type: 'FeatureCollection',
-    features: pointData.value,
+    features: pointData,
   });
-  // pointData.value.push(...aryToData(pointAry));
+  // pointData.value.push(...aryToData(ary));
   // pointLayer.value.setData(pointData.value);
   drawInstance.delete(id);
 };
@@ -161,39 +151,39 @@ const getPointData = () => {
 // 楼层平面图
 const buildingId = ref('31000005');
 const floor = ref('F1');
-const floorLayer = ref(null);
+let floorLayer;
 async function loadFloorLayer() {
-  if (floorLayer.value !== null) return;
+  if (floorLayer) return;
   const floorGeo = await getIndoorMap(buildingId.value, floor.value);
   const geoData = convertLngLat(floorGeo);
-  floorLayer.value = initFloor(map.value, geoData, {});
-  map.value.addLayer(floorLayer.value);
-  map.value.flyTo({
+  floorLayer = initFloor(map, geoData, {});
+  map.addLayer(floorLayer);
+  map.flyTo({
     center: geoData.center,
     zoom: 19,
   });
   // 初始化其他图层
-  initDraw();
+  initDrawTool();
   initPoint();
 }
 
 function mapInit() {
-  map.value = initMap(undefined, { center: [121.602699, 31.17583] });
-  map.value.on('load', () => {
+  map = initMap(undefined, { center: [121.602699, 31.17583] });
+  map.on('load', () => {
     loadFloorLayer();
   });
-  map.value.on('style.load', () => {
+  map.on('style.load', () => {
     const filter = ['match', ['get', 'id'], 4558283, 'none', 'visible'];
-    map.value.setLayoutProperty('building', 'visibility', filter);
+    map.setLayoutProperty('building', 'visibility', filter);
   });
-  map.value.on('click', (e: any) => {
+  map.on('click', (e: any) => {
     console.log(e.lngLat.lng, e.lngLat.lat);
   });
-  map.value.on('click', 'building', (e: any) => {
+  map.on('click', 'building', (e: any) => {
     // console.log(e);
     const { id } = e.features[0];
     console.log(id);
-    map.value.setFilter('building', null);
+    map.setFilter('building', null);
     /* if (buildingIds.find(i => i === id) !== undefined) {
       map.flyTo({
         center,
@@ -203,13 +193,13 @@ function mapInit() {
       });
     } */
     /* const filter = ["match", id, 4558283, "none", "visible"]
-    map.value.setLayoutProperty('building', 'visibility', filter); */
+    map.setLayoutProperty('building', 'visibility', filter); */
     const filter = ['match', id, 4558283, '#1B8B8F', 'rgb(70, 66, 150)'];
-    map.value.setPaintProperty('building', 'fill-extrusion-color', filter);
+    map.setPaintProperty('building', 'fill-extrusion-color', filter);
     // 隐藏 building
-    // map.value.setFilter('building','visibility', ['!', ['in', ['get', 'id'], ["literal"].concat(['4558283'])]]);
+    // map.setFilter('building','visibility', ['!', ['in', ['get', 'id'], ["literal"].concat(['4558283'])]]);
     const fil = ['all', ['==', ['get', 'id'], 4558283], ['==', ['get', 'building_code'], 4558283]];
-    map.value.setFilter(fil, { layer: 'building' });
+    map.setFilter(fil, { layer: 'building' });
     console.log();
   });
 }
@@ -227,13 +217,17 @@ const fetchData = async () => {
     // 做一些加载状态初始化等操作
   }
 };
+// 监听地图容器尺寸，改变地图大小
+function onMapResize() {
+  map.resize();
+}
 
 onMounted(() => {
   console.log('加载完');
   nextTick(() => {
     mapInit();
   });
-  console.log(map.value);
+  console.log(map);
 });
 </script>
 

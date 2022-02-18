@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 
+import VueResizeObserver from 'vue-resize-observer';
 import TDesign from 'tdesign-vue-next';
 import 'tdesign-vue-next/es/style/index.css';
 import VueClipboard from 'vue3-clipboard';
@@ -16,5 +17,6 @@ app.use(TDesign);
 app.use(store);
 app.use(router);
 app.use(VueClipboard);
+app.use(VueResizeObserver);
 
 app.mount('#app');
