@@ -1,31 +1,71 @@
 <template>
-  <div>
-    <card class="list-card-container">
-      <t-row justify="space-between">
-        <div class="left-operation-container">
-          <t-button @click="handleSetupContract"> 新建项目 </t-button>
-          <t-button variant="base" theme="default" :disabled="!selectedRowKeys.length"> 导出项目 </t-button>
-          <p v-if="!!selectedRowKeys.length" class="selected-count">已选{{ selectedRowKeys.length }}项</p>
-        </div>
-        <t-input v-model="searchValue" class="search-input" placeholder="请输入你需要搜索的内容" clearable>
-          <template #suffix-icon>
-            <search-icon size="20px" />
-          </template>
-        </t-input>
-      </t-row>
+  <div class="list-common-table">
+    <t-form ref="form" :data="formData" :label-width="80" colon @reset="onReset" @submit="onSubmit">
+      <t-row>
+        <t-col :span="10">
+          <t-row :gutter="[16, 16]">
+            <t-col :flex="1">
+              <t-form-item label="项目名称" name="name">
+                <t-input
+                  v-model="formData.name"
+                  class="form-item-content"
+                  type="search"
+                  placeholder="请输入项目名称"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :flex="1">
+              <t-form-item label="项目状态" name="status">
+                <t-select
+                  v-model="formData.status"
+                  class="form-item-content"
+                  :options="CONTRACT_STATUS_OPTIONS"
+                  placeholder="请选择项目状态"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :flex="1">
+              <t-form-item label="项目编号" name="no">
+                <t-input
+                  v-model="formData.no"
+                  class="form-item-content"
+                  placeholder="请输入项目编号"
+                  :style="{ minWidth: '134px' }"
+                />
+              </t-form-item>
+            </t-col>
+            <t-col :flex="1">
+              <t-form-item label="项目类型" name="type">
+                <t-select
+                  v-model="formData.type"
+                  class="form-item-content"
+                  :options="CONTRACT_TYPE_OPTIONS"
+                  placeholder="请选择项目类型"
+                />
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </t-col>
 
+        <t-col :span="2" class="operation-container">
+          <t-button theme="primary" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
+          <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
+        </t-col>
+      </t-row>
+    </t-form>
+
+    <div class="table-container">
       <t-table
         :data="data"
         :columns="COLUMNS"
         :row-key="rowKey"
-        vertical-align="top"
-        :hover="true"
+        :vertical-align="verticalAlign"
+        :hover="hover"
         :pagination="pagination"
-        :selected-row-keys="selectedRowKeys"
         :loading="dataLoading"
         @page-change="rehandlePageChange"
         @change="rehandleChange"
-        @select-change="rehandleSelectChange"
       >
         <template #status="{ row }">
           <t-tag v-if="row.status === CONTRACT_STATUS.FAIL" theme="danger" variant="light"> 审核失败 </t-tag>
@@ -40,66 +80,120 @@
           <p v-if="row.contractType === CONTRACT_TYPES.SUPPLEMENT">待履行</p>
         </template>
         <template #paymentType="{ row }">
-          <div v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.PAYMENT" class="payment-col">
+          <p v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.PAYMENT" class="payment-col">
             付款<trend class="dashboard-item-trend" type="up" />
-          </div>
-          <div v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.RECIPT" class="payment-col">
+          </p>
+          <p v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.RECIPT" class="payment-col">
             收款<trend class="dashboard-item-trend" type="down" />
-          </div>
+          </p>
         </template>
-
         <template #op="slotProps">
-          <a class="t-button-link" @click="handleClickDetail()">详情</a>
+          <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
         </template>
       </t-table>
-    </card>
-
-    <t-dialog
-      v-model:visible="confirmVisible"
-      header="确认删除当前所选项目？"
-      :body="confirmBody"
-      :on-cancel="onCancel"
-      @confirm="onConfirmDelete"
-    />
+      <t-dialog
+        v-model:visible="confirmVisible"
+        header="确认删除当前所选项目？"
+        :body="confirmBody"
+        :on-cancel="onCancel"
+        @confirm="onConfirmDelete"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { SearchIcon } from 'tdesign-icons-vue-next';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
-
-import { CONTRACT_STATUS, CONTRACT_TYPES, CONTRACT_PAYMENT_TYPES } from '@/constants';
 import Trend from '@/components/trend/index.vue';
-import Card from '@/components/card/index.vue';
-import { ResDataType } from '@/interface';
-import request from '@/service/request';
+import { getList } from '@/service/api/project/index';
 
-import { COLUMNS } from './constants';
+import {
+  CONTRACT_STATUS,
+  CONTRACT_STATUS_OPTIONS,
+  CONTRACT_TYPES,
+  CONTRACT_TYPE_OPTIONS,
+  CONTRACT_PAYMENT_TYPES,
+} from '@/constants';
+
+// import { COLUMNS } from './constants';
+
+const COLUMNS = [
+  {
+    title: '项目名称',
+    fixed: 'left',
+    minWidth: '300',
+    align: 'left',
+    ellipsis: true,
+    colKey: 'name',
+  },
+  { title: '项目状态', colKey: 'status', width: 200, cell: { col: 'status' } },
+  {
+    title: '项目编号',
+    width: 200,
+    ellipsis: true,
+    colKey: 'no',
+  },
+  {
+    title: '项目类型',
+    width: 200,
+    ellipsis: true,
+    colKey: 'contractType',
+  },
+  {
+    title: '项目收付类型',
+    width: 200,
+    ellipsis: true,
+    colKey: 'paymentType',
+  },
+  {
+    title: '项目金额 (元)',
+    width: 200,
+    ellipsis: true,
+    colKey: 'amount',
+  },
+  {
+    align: 'left',
+    fixed: 'right',
+    width: 200,
+    colKey: 'op',
+    title: '操作',
+  },
+];
+
+const searchForm = {
+  name: '',
+  no: undefined,
+  status: undefined,
+  type: '',
+};
 
 export default defineComponent({
-  name: 'ListBaseCard',
+  name: 'ListTable',
   components: {
-    Card,
-    SearchIcon,
     Trend,
   },
   setup() {
-    const data = ref([]);
+    const formData = ref({ ...searchForm });
+    const tableConfig = {
+      rowKey: 'index',
+      verticalAlign: 'top',
+      hover: true,
+    };
     const pagination = ref({
       defaultPageSize: 20,
       total: 100,
       defaultCurrent: 1,
     });
+    const confirmVisible = ref(false);
 
-    const searchValue = ref('');
+    const data = ref([]);
 
     const dataLoading = ref(false);
     const fetchData = async () => {
       dataLoading.value = true;
       try {
-        const res: ResDataType = await request.get('/api/get-list');
+        const res = await getList();
         if (res.code === 0) {
           const { list = [] } = res.data;
           data.value = list;
@@ -124,16 +218,6 @@ export default defineComponent({
       return '';
     });
 
-    onMounted(() => {
-      fetchData();
-    });
-
-    const confirmVisible = ref(false);
-
-    const selectedRowKeys = ref([1, 2]);
-
-    const router = useRouter();
-
     const resetIdx = () => {
       deleteIdx.value = -1;
     };
@@ -142,10 +226,6 @@ export default defineComponent({
       // 真实业务请发起请求
       data.value.splice(deleteIdx.value, 1);
       pagination.value.total = data.value.length;
-      const selectedIdx = selectedRowKeys.value.indexOf(deleteIdx.value);
-      if (selectedIdx > -1) {
-        selectedRowKeys.value.splice(selectedIdx, 1);
-      }
       confirmVisible.value = false;
       MessagePlugin.success('删除成功');
       resetIdx();
@@ -155,23 +235,35 @@ export default defineComponent({
       resetIdx();
     };
 
+    onMounted(() => {
+      fetchData();
+    });
+
     return {
-      CONTRACT_STATUS,
-      CONTRACT_TYPES,
-      CONTRACT_PAYMENT_TYPES,
-      COLUMNS,
       data,
-      searchValue,
-      dataLoading,
+      COLUMNS,
+      CONTRACT_STATUS,
+      CONTRACT_STATUS_OPTIONS,
+      CONTRACT_TYPES,
+      CONTRACT_TYPE_OPTIONS,
+      CONTRACT_PAYMENT_TYPES,
+      formData,
       pagination,
-      confirmBody,
       confirmVisible,
-      rowKey: 'index',
+      confirmBody,
+      ...tableConfig,
       onConfirmDelete,
       onCancel,
-      selectedRowKeys,
-      rehandleSelectChange(val: number[]) {
-        selectedRowKeys.value = val;
+      dataLoading,
+      handleClickDelete({ row }) {
+        deleteIdx.value = row.rowIndex;
+        confirmVisible.value = true;
+      },
+      onReset(val) {
+        console.log(val);
+      },
+      onSubmit(val) {
+        console.log(val);
       },
       rehandlePageChange(curr, pageInfo) {
         console.log('分页变化', curr, pageInfo);
@@ -179,23 +271,45 @@ export default defineComponent({
       rehandleChange(changeParams, triggerAndData) {
         console.log('统一Change', changeParams, triggerAndData);
       },
-      handleClickDetail() {
-        router.push('/detail/base');
-      },
-      handleSetupContract() {
-        router.push('/form/base');
-      },
-      handleClickDelete(row: { rowIndex: any }) {
-        deleteIdx.value = row.rowIndex;
-        confirmVisible.value = true;
+      rehandleClickOp({ text, row }) {
+        console.log(text, row);
       },
     };
   },
-  methods: {},
 });
 </script>
-<style lang="less" scoped>
-@import '@/style/variables';
+
+<style lang="less">
+@import '@/style/variables.less';
+.list-common-table {
+  background-color: @bg-color-container;
+  padding: 30px 32px;
+  border-radius: @border-radius;
+
+  .table-container {
+    margin-top: 30px;
+  }
+}
+
+.form-item-content {
+  width: 100%;
+}
+
+.operation-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  .expand {
+    .t-button__text {
+      display: flex;
+      align-items: center;
+    }
+    .t-icon {
+      margin-left: 4px;
+      transition: transform 0.3s ease;
+    }
+  }
+}
 
 .payment-col {
   display: flex;
@@ -205,20 +319,5 @@ export default defineComponent({
     align-items: center;
     margin-left: 8px;
   }
-}
-
-.left-operation-container {
-  padding: 6px 0;
-  margin-bottom: 16px;
-
-  .selected-count {
-    display: inline-block;
-    margin-left: 8px;
-    color: @text-color-secondary;
-  }
-}
-
-.search-input {
-  width: 360px;
 }
 </style>

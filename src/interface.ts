@@ -2,13 +2,13 @@
  * @Author: Zed.wu
  * @Date: 2022-02-10 09:55:54
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-16 18:39:08
+ * @LastEditTime: 2022-02-23 16:32:56
  */
 import STYLE_CONFIG from '@/config/style';
 
-export interface ResDataType {
+export interface ResDataType<T = any> {
   code: number;
-  data: any;
+  data: T;
 }
 
 export interface MenuRoute {
