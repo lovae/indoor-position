@@ -1,16 +1,21 @@
 import Layout from '@/layouts';
-import ListIcon from '@/assets/assets-slide-list.svg';
-import FormIcon from '@/assets/assets-slide-form.svg';
-import DetailIcon from '@/assets/assets-slide-detail.svg';
+// import ListIcon from '@/assets/assets-slide-list.svg';
+// import FormIcon from '@/assets/assets-slide-form.svg';
+// import DetailIcon from '@/assets/assets-slide-detail.svg';
 
 export default [
   {
-    path: '/list',
-    name: 'list',
+    path: '/demo',
+    name: 'demo',
+    meta: { title: '示例页', icon: 'layers' },
     component: Layout,
-    redirect: '/list/base',
-    meta: { title: '列表页', icon: ListIcon },
     children: [
+      {
+        path: 'planBeacon',
+        name: 'planBeacon',
+        component: () => import('@/pages/demo/plan-beacon/index.vue'),
+        meta: { title: '信标规划' },
+      },
       {
         path: 'base',
         name: 'listBase',
@@ -35,15 +40,6 @@ export default [
         component: () => import('@/pages/list/tree/index.vue'),
         meta: { title: '树状筛选列表页' },
       },
-    ],
-  },
-  {
-    path: '/form',
-    name: 'form',
-    component: Layout,
-    redirect: '/form/base',
-    meta: { title: '表单页', icon: FormIcon },
-    children: [
       {
         path: 'base',
         name: 'formBase',
@@ -56,15 +52,6 @@ export default [
         component: () => import('@/pages/form/step/index.vue'),
         meta: { title: '分步表单页' },
       },
-    ],
-  },
-  {
-    path: '/detail',
-    name: 'detail',
-    component: Layout,
-    redirect: '/detail/base',
-    meta: { title: '详情页', icon: DetailIcon },
-    children: [
       {
         path: 'base',
         name: 'detailBase',
@@ -89,15 +76,6 @@ export default [
         component: () => import('@/pages/detail/secondary/index.vue'),
         meta: { title: '二级详情页' },
       },
-    ],
-  },
-  {
-    path: '/result',
-    name: 'result',
-    component: Layout,
-    redirect: '/result/success',
-    meta: { title: '结果页', icon: 'check-circle' },
-    children: [
       {
         path: 'success',
         name: 'resultSuccess',

@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-02-10 09:55:54
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-10 17:49:03
+ * @LastEditTime: 2022-02-24 18:18:03
  */
 import Layout from '@/layouts';
 import DashboardIcon from '@/assets/assets-slide-dashboard.svg';
@@ -30,30 +30,22 @@ export default [
     ],
   },
   {
-    path: '/demo',
-    name: 'demo',
-    meta: { title: '示例页', icon: 'layers' },
+    path: '/project',
+    name: 'project',
+    meta: { title: '项目', icon: 'server' },
     component: Layout,
     children: [
       {
-        path: 'planBeacon',
-        name: 'planBeacon',
-        component: () => import('@/pages/demo/plan-beacon/index.vue'),
-        meta: { title: '信标规划' },
-      },
-    ],
-  },
-  {
-    path: '/manageProject',
-    name: 'manageProject',
-    meta: { title: '项目管理', icon: 'server' },
-    component: Layout,
-    children: [
-      {
-        path: 'manageProject',
-        name: 'manageProject',
-        component: () => import('@/pages/manage-project/index.vue'),
+        path: 'manage',
+        name: 'projectManage',
+        component: () => import('@/pages/project/manage/index.vue'),
         meta: { title: '项目管理' },
+      },
+      {
+        path: 'add',
+        name: 'projectAdd',
+        component: () => import('@/pages/project/add/index.vue'),
+        meta: { title: '新建项目', hide: true },
       },
     ],
   },

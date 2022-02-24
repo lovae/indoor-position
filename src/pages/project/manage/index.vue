@@ -1,59 +1,40 @@
 <template>
   <div class="list-common-table">
-    <t-form ref="form" :data="formData" :label-width="80" colon @reset="onReset" @submit="onSubmit">
-      <t-row>
-        <t-col :span="10">
+    <t-row>
+      <t-col flex="auto">
+        <t-form ref="form" :data="formData" :label-width="0" colon @reset="onReset" @submit="onSubmit">
           <t-row :gutter="[16, 16]">
-            <t-col :flex="1">
-              <t-form-item label="项目名称" name="name">
+            <t-col flex="1">
+              <t-form-item name="name">
                 <t-input
                   v-model="formData.name"
-                  class="form-item-content"
                   type="search"
                   placeholder="请输入项目名称"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
             </t-col>
-            <t-col :flex="1">
-              <t-form-item label="项目状态" name="status">
-                <t-select
-                  v-model="formData.status"
-                  class="form-item-content"
-                  :options="CONTRACT_STATUS_OPTIONS"
-                  placeholder="请选择项目状态"
-                />
+            <t-col flex="1">
+              <t-form-item name="status">
+                <t-select v-model="formData.status" :options="CONTRACT_STATUS_OPTIONS" placeholder="请选择项目状态" />
               </t-form-item>
             </t-col>
-            <t-col :flex="1">
-              <t-form-item label="项目编号" name="no">
-                <t-input
-                  v-model="formData.no"
-                  class="form-item-content"
-                  placeholder="请输入项目编号"
-                  :style="{ minWidth: '134px' }"
-                />
+            <t-col flex="1">
+              <t-form-item name="no">
+                <t-input v-model="formData.no" placeholder="请输入项目编号" :style="{ minWidth: '134px' }" />
               </t-form-item>
             </t-col>
-            <t-col :flex="1">
-              <t-form-item label="项目类型" name="type">
-                <t-select
-                  v-model="formData.type"
-                  class="form-item-content"
-                  :options="CONTRACT_TYPE_OPTIONS"
-                  placeholder="请选择项目类型"
-                />
-              </t-form-item>
+            <t-col :span="4">
+              <t-button theme="primary" type="submit"> 查询 </t-button>
+              <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
             </t-col>
           </t-row>
-        </t-col>
-
-        <t-col :span="2" class="operation-container">
-          <t-button theme="primary" type="submit" :style="{ marginLeft: '8px' }"> 查询 </t-button>
-          <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
-        </t-col>
-      </t-row>
-    </t-form>
+        </t-form>
+      </t-col>
+      <t-col flex="60px">
+        <t-button theme="primary"> 新增</t-button>
+      </t-col>
+    </t-row>
 
     <div class="table-container">
       <t-table
@@ -107,6 +88,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import Trend from '@/components/trend/index.vue';
 import { getList } from '@/service/api/project/index';
+// import { COLUMNS } from '../constants';
 
 import {
   CONTRACT_STATUS,
@@ -115,8 +97,6 @@ import {
   CONTRACT_TYPE_OPTIONS,
   CONTRACT_PAYMENT_TYPES,
 } from '@/constants';
-
-// import { COLUMNS } from './constants';
 
 const COLUMNS = [
   {
