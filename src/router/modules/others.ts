@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-24 09:36:30
+ */
 import Layout from '@/layouts';
 import LogoutIcon from '@/assets/assets-slide-logout.svg';
 
@@ -20,7 +26,7 @@ export default [
   {
     path: '/loginRedirect',
     name: 'loginRedirect',
-    meta: { title: '登录页', icon: LogoutIcon },
+    meta: { title: '登录页', icon: LogoutIcon, hide: true },
     component: () => import('@/layouts/blank.vue'),
     children: [
       {

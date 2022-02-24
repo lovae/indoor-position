@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-10 09:55:54
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-24 15:51:25
+ */
 import { defineComponent, PropType, computed, h } from 'vue';
 import { prefix } from '@/config/global';
 import { MenuRoute } from '@/interface';
@@ -8,6 +14,18 @@ const getMenuList = (list: MenuRoute[], basePath?: string): MenuRoute[] => {
   }
   return list.map((item) => {
     const path = basePath ? `${basePath}/${item.path}` : item.path;
+    /* if (item.meta.hide) {
+      console.log(item);
+      return {
+        path,
+        title: item.meta?.title,
+        icon: item.meta?.icon || '',
+        children: getMenuList(item.children, path),
+        meta: item.meta,
+        redirect: item.redirect,
+        hidden: true,
+      };
+    } */
     return {
       path,
       title: item.meta?.title,
@@ -34,6 +52,10 @@ const renderIcon = (item) => {
 
 const useRenderNav = (list: Array<MenuRoute>) => {
   return list.map((item) => {
+    // 对于meta中hide的路由不生成菜单
+    if (item.meta.hide) {
+      return undefined;
+    }
     if (!item.children || !item.children.length || item.meta?.single) {
       return (
         <t-menu-item
