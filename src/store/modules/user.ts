@@ -2,7 +2,7 @@
  * @Author: Zed.wu
  * @Date: 2022-02-15 17:22:18
  * @LastEditors: Zed.Wu
- * @LastEditTime: 2022-02-16 11:45:04
+ * @LastEditTime: 2022-02-25 16:41:24
  */
 import { TOKEN_NAME, USER_ID } from '@/config/global';
 import { getInfo, login } from '@/service/api/user/index';
@@ -48,6 +48,7 @@ const getters = {
   roles: () => {
     // 在这里可以控制角色权限，配合src/permission.ts
     return state.userInfo?.role?.name;
+    // return '超级管理员';
     // return ['ALL_ROUTERS'];
   },
 };

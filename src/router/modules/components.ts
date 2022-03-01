@@ -7,7 +7,7 @@ export default [
   {
     path: '/demo',
     name: 'demo',
-    meta: { title: '示例页', icon: 'layers' },
+    meta: { title: '示例页', icon: 'layers', hide: true },
     component: Layout,
     children: [
       {

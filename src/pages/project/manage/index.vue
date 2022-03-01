@@ -14,11 +14,11 @@
                 />
               </t-form-item>
             </t-col>
-            <t-col flex="1">
+            <!-- <t-col flex="1">
               <t-form-item name="status">
                 <t-select v-model="formData.status" :options="CONTRACT_STATUS_OPTIONS" placeholder="请选择项目状态" />
               </t-form-item>
-            </t-col>
+            </t-col> -->
             <t-col flex="1">
               <t-form-item name="no">
                 <t-input v-model="formData.no" placeholder="请输入项目编号" :style="{ minWidth: '134px' }" />
@@ -32,7 +32,7 @@
         </t-form>
       </t-col>
       <t-col flex="60px">
-        <t-button theme="primary"> 新增</t-button>
+        <t-button theme="primary" @click="handleClickAdd">创建</t-button>
       </t-col>
     </t-row>
 
@@ -86,6 +86,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
+import { useRouter } from 'vue-router';
 import Trend from '@/components/trend/index.vue';
 import { getList } from '@/service/api/project/index';
 // import { COLUMNS } from '../constants';
@@ -214,7 +215,7 @@ export default defineComponent({
     const onCancel = () => {
       resetIdx();
     };
-
+    const router = useRouter();
     onMounted(() => {
       fetchData();
     });
@@ -253,6 +254,11 @@ export default defineComponent({
       },
       rehandleClickOp({ text, row }) {
         console.log(text, row);
+        router.push(`/project/${row.no}`);
+        // router.push('/project/add');
+      },
+      handleClickAdd() {
+        router.push('/project/add');
       },
     };
   },

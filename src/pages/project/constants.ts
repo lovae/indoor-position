@@ -46,3 +46,21 @@ export const COLUMNS = [
     title: '操作',
   },
 ];
+
+export const FLOOR_COLUMNS = [
+  { colKey: 'row-select', type: 'multiple', width: 64, fixed: 'left' },
+  {
+    title: '楼层名称',
+    align: 'left',
+    width: 300,
+    colKey: 'name',
+    fixed: 'left',
+  },
+  {
+    align: 'left',
+    fixed: 'right',
+    width: 200,
+    colKey: 'op',
+    title: '操作',
+  },
+];

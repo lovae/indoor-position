@@ -1,3 +1,9 @@
+/*
+ * @Author: Zed.wu
+ * @Date: 2022-02-16 15:42:09
+ * @LastEditors: Zed.Wu
+ * @LastEditTime: 2022-02-25 16:40:36
+ */
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import baseRouters from './modules/base';
