@@ -46,3 +46,53 @@ export const NOTIFICATION_TYPES = {
   middle: 'warning',
   high: 'danger',
 };
+
+// 项目用到的
+export const PROJECT_STATUS = {
+  0: {
+    theme: 'default',
+    value: '关闭',
+  },
+  1: {
+    theme: 'success',
+    value: '开启',
+  },
+};
+
+export const NEED_BEACON = {
+  0: '不',
+  1: '需要',
+};
+
+export const BEACON_TYPES = {
+  0: 'wifi',
+  1: '蓝牙',
+};
+export const TECHNOLOGYS = {
+  0: '权重',
+  1: '指纹',
+};
+
+export const MAP_TYPES = {
+  0: '内部地图',
+  1: '用户上传',
+};
+
+export const FLOOR_STATUS = {
+  0: {
+    theme: 'default',
+    value: '规划中',
+  },
+  1: {
+    theme: 'primary',
+    value: '采集中',
+  },
+  2: {
+    theme: 'warning',
+    value: '验证审核中',
+  },
+  3: {
+    theme: 'success',
+    value: '发布上线',
+  },
+};

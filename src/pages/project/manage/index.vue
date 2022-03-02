@@ -4,7 +4,7 @@
       <t-col flex="auto">
         <t-form ref="form" :data="formData" :label-width="0" colon @reset="onReset" @submit="onSubmit">
           <t-row :gutter="[16, 16]">
-            <t-col flex="1">
+            <t-col :span="3">
               <t-form-item name="name">
                 <t-input
                   v-model="formData.name"
@@ -19,12 +19,12 @@
                 <t-select v-model="formData.status" :options="CONTRACT_STATUS_OPTIONS" placeholder="请选择项目状态" />
               </t-form-item>
             </t-col> -->
-            <t-col flex="1">
+            <t-col :span="3">
               <t-form-item name="no">
-                <t-input v-model="formData.no" placeholder="请输入项目编号" :style="{ minWidth: '134px' }" />
+                <t-input v-model="formData.no" placeholder="请输入项目ID" :style="{ minWidth: '134px' }" />
               </t-form-item>
             </t-col>
-            <t-col :span="4">
+            <t-col :span="3">
               <t-button theme="primary" type="submit"> 查询 </t-button>
               <t-button type="reset" variant="base" theme="default"> 重置 </t-button>
             </t-col>
@@ -49,27 +49,15 @@
         @change="rehandleChange"
       >
         <template #status="{ row }">
-          <t-tag v-if="row.status === CONTRACT_STATUS.FAIL" theme="danger" variant="light"> 审核失败 </t-tag>
-          <t-tag v-if="row.status === CONTRACT_STATUS.AUDIT_PENDING" theme="warning" variant="light"> 待审核 </t-tag>
-          <t-tag v-if="row.status === CONTRACT_STATUS.EXEC_PENDING" theme="warning" variant="light"> 待履行 </t-tag>
-          <t-tag v-if="row.status === CONTRACT_STATUS.EXECUTING" theme="success" variant="light"> 履行中 </t-tag>
-          <t-tag v-if="row.status === CONTRACT_STATUS.FINISH" theme="success" variant="light"> 已完成 </t-tag>
+          <t-tag :theme="PROJECT_STATUS[row.status].theme" variant="light">
+            {{ PROJECT_STATUS[row.status].value }}
+          </t-tag>
         </template>
-        <template #contractType="{ row }">
-          <p v-if="row.contractType === CONTRACT_TYPES.MAIN">审核失败</p>
-          <p v-if="row.contractType === CONTRACT_TYPES.SUB">待审核</p>
-          <p v-if="row.contractType === CONTRACT_TYPES.SUPPLEMENT">待履行</p>
-        </template>
-        <template #paymentType="{ row }">
-          <p v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.PAYMENT" class="payment-col">
-            付款<trend class="dashboard-item-trend" type="up" />
-          </p>
-          <p v-if="row.paymentType === CONTRACT_PAYMENT_TYPES.RECIPT" class="payment-col">
-            收款<trend class="dashboard-item-trend" type="down" />
-          </p>
+        <template #pro_city="{ row }">
+          <p>{{ row.province + row.city }}</p>
         </template>
         <template #op="slotProps">
-          <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
+          <a class="t-button-link" @click="rehandleClickOp(slotProps)">查看</a>
           <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
         </template>
       </t-table>
@@ -87,60 +75,10 @@
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { useRouter } from 'vue-router';
-import Trend from '@/components/trend/index.vue';
-import { getList } from '@/service/api/project/index';
-// import { COLUMNS } from '../constants';
+// import { getList } from '@/service/api/project/index';
 
-import {
-  CONTRACT_STATUS,
-  CONTRACT_STATUS_OPTIONS,
-  CONTRACT_TYPES,
-  CONTRACT_TYPE_OPTIONS,
-  CONTRACT_PAYMENT_TYPES,
-} from '@/constants';
-
-const COLUMNS = [
-  {
-    title: '项目名称',
-    fixed: 'left',
-    minWidth: '300',
-    align: 'left',
-    ellipsis: true,
-    colKey: 'name',
-  },
-  { title: '项目状态', colKey: 'status', width: 200, cell: { col: 'status' } },
-  {
-    title: '项目编号',
-    width: 200,
-    ellipsis: true,
-    colKey: 'no',
-  },
-  {
-    title: '项目类型',
-    width: 200,
-    ellipsis: true,
-    colKey: 'contractType',
-  },
-  {
-    title: '项目收付类型',
-    width: 200,
-    ellipsis: true,
-    colKey: 'paymentType',
-  },
-  {
-    title: '项目金额 (元)',
-    width: 200,
-    ellipsis: true,
-    colKey: 'amount',
-  },
-  {
-    align: 'left',
-    fixed: 'right',
-    width: 200,
-    colKey: 'op',
-    title: '操作',
-  },
-];
+import { PROJECT_STATUS } from '@/constants';
+import { COLUMNS } from './constants';
 
 const searchForm = {
   name: '',
@@ -151,9 +89,7 @@ const searchForm = {
 
 export default defineComponent({
   name: 'ListTable',
-  components: {
-    Trend,
-  },
+  components: {},
   setup() {
     const formData = ref({ ...searchForm });
     const tableConfig = {
@@ -174,7 +110,7 @@ export default defineComponent({
     const fetchData = async () => {
       dataLoading.value = true;
       try {
-        const res = await getList();
+        /* const res = await getList();
         if (res.code === 0) {
           const { list = [] } = res.data;
           data.value = list;
@@ -182,7 +118,49 @@ export default defineComponent({
             ...pagination.value,
             total: list.length,
           };
-        }
+        } */
+        data.value = [
+          {
+            id: '08e7d2e0-6847-11ec-99af-f93a3c42cf33',
+            name: '室内定位',
+            description: '室内定位平台详细介绍。。。',
+            province: '湖北省',
+            city: '武汉市',
+            address: '光谷中建宝谷商务中心',
+            surveyors: '张三，李四',
+            auditors: '王五',
+            needBeacon: 1,
+            beaconType: 1,
+            technology: 1,
+            releaseTime: '2021-11-24 17:30:00',
+            createTime: '2021-11-24 17:30:00',
+            updateTime: '2021-11-24 17:30:00',
+            status: 1,
+            createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
+          },
+          {
+            id: '08e7d2e0-6847-11ec-99af-f93a3c42cf34',
+            name: '室内定位2',
+            description: '室内定位平台详细介绍。。。',
+            province: '湖北省',
+            city: '武汉市',
+            address: '光谷中建宝谷商务中心2',
+            surveyors: '张三',
+            auditors: '王五',
+            needBeacon: 0,
+            beaconType: 0,
+            technology: 0,
+            releaseTime: '2021-11-24 17:30:00',
+            createTime: '2021-11-24 17:30:00',
+            updateTime: '2021-11-24 17:30:00',
+            status: 0,
+            createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
+          },
+        ];
+        pagination.value = {
+          ...pagination.value,
+          total: data.value.length,
+        };
       } catch (e) {
         console.log(e);
       } finally {
@@ -190,22 +168,23 @@ export default defineComponent({
       }
     };
 
-    const deleteIdx = ref(-1);
+    const deleteIdx = ref(null);
     const confirmBody = computed(() => {
-      if (deleteIdx.value > -1) {
-        const { name } = data.value[deleteIdx.value];
+      if (deleteIdx.value) {
+        const { name } = deleteIdx.value;
         return `删除后，${name}的所有项目信息将被清空，且无法恢复`;
       }
       return '';
     });
 
     const resetIdx = () => {
-      deleteIdx.value = -1;
+      deleteIdx.value = null;
     };
 
     const onConfirmDelete = () => {
       // 真实业务请发起请求
-      data.value.splice(deleteIdx.value, 1);
+      // data.value.splice(deleteIdx.value, 1);
+
       pagination.value.total = data.value.length;
       confirmVisible.value = false;
       MessagePlugin.success('删除成功');
@@ -223,11 +202,7 @@ export default defineComponent({
     return {
       data,
       COLUMNS,
-      CONTRACT_STATUS,
-      CONTRACT_STATUS_OPTIONS,
-      CONTRACT_TYPES,
-      CONTRACT_TYPE_OPTIONS,
-      CONTRACT_PAYMENT_TYPES,
+      PROJECT_STATUS,
       formData,
       pagination,
       confirmVisible,
@@ -237,7 +212,7 @@ export default defineComponent({
       onCancel,
       dataLoading,
       handleClickDelete({ row }) {
-        deleteIdx.value = row.rowIndex;
+        deleteIdx.value = row;
         confirmVisible.value = true;
       },
       onReset(val) {
@@ -254,7 +229,7 @@ export default defineComponent({
       },
       rehandleClickOp({ text, row }) {
         console.log(text, row);
-        router.push(`/project/${row.no}`);
+        router.push(`/project/${row.id}`);
         // router.push('/project/add');
       },
       handleClickAdd() {

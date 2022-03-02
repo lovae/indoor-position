@@ -6,7 +6,7 @@
  * @LastEditTime: 2022-02-23 16:36:10
  */
 
-export interface IProject {
+export interface IProjectOld {
   index: number;
   status: number;
   no: string;
@@ -17,7 +17,24 @@ export interface IProject {
   amount: string;
   adminName: string;
 }
-
+export interface IProject {
+  id: string;
+  name: string;
+  description: string;
+  province: string;
+  city: string;
+  address: string;
+  surveyors: string;
+  auditors: string;
+  needBeacon: number;
+  beaconType: number;
+  technology: number;
+  releaseTime: string;
+  createTime: string;
+  updateTime: string;
+  status: number;
+  createdBy: string;
+}
 export interface IProjectList {
-  list: IProject[];
+  list: IProjectOld[];
 }

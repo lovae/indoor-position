@@ -10,8 +10,9 @@ export default [
   {
     path: '/project',
     name: 'project',
-    meta: { title: '项目', icon: 'server' },
     component: Layout,
+    redirect: '/project/manage',
+    meta: { title: '项目管理', icon: 'server', single: true },
     children: [
       {
         path: 'manage',
