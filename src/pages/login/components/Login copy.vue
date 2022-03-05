@@ -39,7 +39,7 @@
       </div>
     </template>
 
-    <!-- 扫码登陆 -->
+    <!-- 扫码登录 -->
     <template v-else-if="type == 'qrcode'">
       <div class="tip-container">
         <span class="tip">请使用微信扫一扫登录</span>
@@ -48,7 +48,7 @@
       <qrcode-vue value="" :size="192" level="H" />
     </template>
 
-    <!-- 手机号登陆 -->
+    <!-- 手机号登录 -->
     <template v-else>
       <t-form-item class="verification-code" name="verifyCode">
         <t-input v-model="formData.verifyCode" size="large" placeholder="请输入验证码" />
@@ -114,7 +114,7 @@ export default defineComponent({
       if (validateResult === true) {
         try {
           await store.dispatch('user/login', formData.value);
-          MessagePlugin.success('登陆成功');
+          MessagePlugin.success('登录成功');
           router.push({
             path: '/dashboard/base',
           });

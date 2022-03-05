@@ -45,7 +45,8 @@
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "vue/first-attribute-linebreak": 0
+    "vue/first-attribute-linebreak": 0,
+    "camelcase": "off"
   },
   "overrides": [
     {

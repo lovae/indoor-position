@@ -18,7 +18,7 @@ export interface IProjectOld {
   adminName: string;
 }
 export interface IProject {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   province: string;
@@ -29,11 +29,11 @@ export interface IProject {
   needBeacon: number;
   beaconType: number;
   technology: number;
-  releaseTime: string;
-  createTime: string;
-  updateTime: string;
-  status: number;
-  createdBy: string;
+  releaseTime?: string;
+  createTime?: string;
+  updateTime?: string;
+  status?: number;
+  createdBy?: string;
 }
 export interface IProjectList {
   list: IProjectOld[];

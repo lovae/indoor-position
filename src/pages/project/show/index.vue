@@ -36,13 +36,11 @@
           </t-table>
         </t-col>
         <t-col flex="360px">
-          <div style="height: 80vh">
-            <info-card :info="projectInfo"></info-card>
+          <info-card :info="projectInfo"></info-card>
 
-            <t-button class="fixed-r-b" shape="circle" theme="primary" variant="base" @click="handleClickAdd">
-              <t-icon name="add" size="28"></t-icon>
-            </t-button>
-          </div>
+          <t-button class="fixed-r-b" shape="circle" theme="primary" variant="base" @click="handleClickAdd">
+            <t-icon name="add" size="28"></t-icon>
+          </t-button>
         </t-col>
       </t-row>
     </div>
@@ -56,6 +54,7 @@ import { useRoute, useRouter } from 'vue-router';
 import infoCard from '../components/projectInfo.vue';
 import { COLUMNS } from './constants';
 import { MAP_TYPES, FLOOR_STATUS } from '@/constants';
+import { IFloor } from '@/service/api/floor/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -81,7 +80,7 @@ const projectInfo = ref({
   createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
 });
 
-const data = ref([
+const data = ref<IFloor[]>([
   {
     id: '08e7d2e0-6847-11ec-99af-f93a3c42cf33',
     projectId: '99e7d2e0-6847-11ec-99af-f93a3c42cf33',
@@ -149,7 +148,7 @@ const data = ref([
 ]);
 const handleClickAdd = () => {
   router.push({
-    name: 'floorAdd',
+    name: 'floorBinding',
   });
 };
 

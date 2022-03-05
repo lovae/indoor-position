@@ -7,6 +7,12 @@ export const COLUMNS = [
     width: 140,
   },
   {
+    title: '层级',
+    align: 'left',
+    colKey: 'floorLevel',
+    width: 80,
+  },
+  {
     title: '楼层ID',
     align: 'left',
     colKey: 'id',

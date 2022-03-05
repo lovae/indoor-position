@@ -83,7 +83,7 @@ export default defineComponent({
             params.password = md5(password);
           }
           await store.dispatch('user/login', params);
-          MessagePlugin.success('登陆成功');
+          MessagePlugin.success('登录成功');
           router.push({
             path: '/dashboard/base',
           });
