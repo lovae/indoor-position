@@ -1,7 +1,6 @@
 @import './variables.less';
 @import './font-family.less';
 
-
 // layout rewrite
 
 .t-layout__sider {
@@ -20,7 +19,7 @@
 }
 
 .t-menu--dark .t-menu__operations .t-icon {
-  color: rgba(255, 255, 255, .55);
+  color: rgba(255, 255, 255, 0.55);
   &:hover {
     cursor: pointer;
   }
@@ -37,17 +36,16 @@
 }
 
 .@{prefix} {
-
   // 布局元素调整
   &-wrapper {
     height: 100vh;
     display: flex;
     flex-direction: column;
   }
-  
-  &-main-wrapper{
+
+  &-main-wrapper {
     height: 500px;
-    overflow: scroll;
+    overflow: auto;
   }
 
   &-side-nav-layout {
@@ -56,9 +54,9 @@
     }
   }
 
-  &-layout{
+  &-layout {
     height: calc(100vh - 64px);
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   &-content-layout {

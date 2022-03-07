@@ -40,13 +40,12 @@
       <t-table
         :data="data"
         :columns="COLUMNS"
-        :row-key="rowKey"
-        :vertical-align="verticalAlign"
-        :hover="hover"
+        row-key="id"
+        :hover="true"
         :pagination="pagination"
         :loading="dataLoading"
         @page-change="rehandlePageChange"
-        @change="rehandleChange"
+        @rowClick="handleClickShow"
       >
         <template #status="{ row }">
           <t-tag :theme="PROJECT_STATUS[row.status].theme" variant="light">
@@ -57,8 +56,10 @@
           <p>{{ row.province + row.city }}</p>
         </template>
         <template #op="slotProps">
-          <a class="t-button-link" @click="rehandleClickOp(slotProps)">查看</a>
-          <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
+          <!-- <a class="t-button-link" @click.stop="handleClickDelete(slotProps)">删除</a> -->
+          <t-button variant="base" size="small" theme="default" @click.stop="handleClickDelete(slotProps)">
+            删除
+          </t-button>
         </template>
       </t-table>
       <t-dialog
@@ -71,8 +72,8 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+<script lang="ts" setup>
+import { ref, computed, onMounted } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { useRouter } from 'vue-router';
 // import { getList } from '@/service/api/project/index';
@@ -86,31 +87,21 @@ const searchForm = {
   status: undefined,
   type: '',
 };
+const formData = ref({ ...searchForm });
+const pagination = ref({
+  defaultPageSize: 20,
+  total: 100,
+  defaultCurrent: 1,
+});
+const confirmVisible = ref(false);
 
-export default defineComponent({
-  name: 'ListTable',
-  components: {},
-  setup() {
-    const formData = ref({ ...searchForm });
-    const tableConfig = {
-      rowKey: 'index',
-      verticalAlign: 'top',
-      hover: true,
-    };
-    const pagination = ref({
-      defaultPageSize: 20,
-      total: 100,
-      defaultCurrent: 1,
-    });
-    const confirmVisible = ref(false);
+const data = ref([]);
 
-    const data = ref([]);
-
-    const dataLoading = ref(false);
-    const fetchData = async () => {
-      dataLoading.value = true;
-      try {
-        /* const res = await getList();
+const dataLoading = ref(false);
+const fetchData = async () => {
+  dataLoading.value = true;
+  try {
+    /* const res = await getList();
         if (res.code === 0) {
           const { list = [] } = res.data;
           data.value = list;
@@ -119,125 +110,112 @@ export default defineComponent({
             total: list.length,
           };
         } */
-        data.value = [
-          {
-            id: '08e7d2e0-6847-11ec-99af-f93a3c42cf33',
-            name: '室内定位',
-            description: '室内定位平台详细介绍。。。',
-            province: '湖北省',
-            city: '武汉市',
-            address: '光谷中建宝谷商务中心',
-            surveyors: '张三，李四',
-            auditors: '王五',
-            needBeacon: 1,
-            beaconType: 1,
-            technology: 1,
-            releaseTime: '2021-11-24 17:30:00',
-            createTime: '2021-11-24 17:30:00',
-            updateTime: '2021-11-24 17:30:00',
-            status: 1,
-            createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
-          },
-          {
-            id: '08e7d2e0-6847-11ec-99af-f93a3c42cf34',
-            name: '室内定位2',
-            description: '室内定位平台详细介绍。。。',
-            province: '湖北省',
-            city: '武汉市',
-            address: '光谷中建宝谷商务中心2',
-            surveyors: '张三',
-            auditors: '王五',
-            needBeacon: 0,
-            beaconType: 0,
-            technology: 0,
-            releaseTime: '2021-11-24 17:30:00',
-            createTime: '2021-11-24 17:30:00',
-            updateTime: '2021-11-24 17:30:00',
-            status: 0,
-            createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
-          },
-        ];
-        pagination.value = {
-          ...pagination.value,
-          total: data.value.length,
-        };
-      } catch (e) {
-        console.log(e);
-      } finally {
-        dataLoading.value = false;
-      }
+    data.value = [
+      {
+        id: '08e7d2e0-6847-11ec-99af-f93a3c42cf33',
+        name: '室内定位',
+        description: '室内定位平台详细介绍。。。',
+        province: '湖北省',
+        city: '武汉市',
+        address: '光谷中建宝谷商务中心',
+        surveyors: '张三，李四',
+        auditors: '王五',
+        needBeacon: 1,
+        beaconType: 1,
+        technology: 1,
+        releaseTime: '2021-11-24 17:30:00',
+        createTime: '2021-11-24 17:30:00',
+        updateTime: '2021-11-24 17:30:00',
+        status: 1,
+        createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
+      },
+      {
+        id: '08e7d2e0-6847-11ec-99af-f93a3c42cf34',
+        name: '室内定位2',
+        description: '室内定位平台详细介绍。。。',
+        province: '湖北省',
+        city: '武汉市',
+        address: '光谷中建宝谷商务中心2',
+        surveyors: '张三',
+        auditors: '王五',
+        needBeacon: 0,
+        beaconType: 0,
+        technology: 0,
+        releaseTime: '2021-11-24 17:30:00',
+        createTime: '2021-11-24 17:30:00',
+        updateTime: '2021-11-24 17:30:00',
+        status: 0,
+        createdBy: '55e7d2e0-6847-11ec-99af-f93a3c42cf33',
+      },
+    ];
+    pagination.value = {
+      ...pagination.value,
+      total: data.value.length,
     };
+  } catch (e) {
+    console.log(e);
+  } finally {
+    dataLoading.value = false;
+  }
+};
 
-    const deleteIdx = ref(null);
-    const confirmBody = computed(() => {
-      if (deleteIdx.value) {
-        const { name } = deleteIdx.value;
-        return `删除后，${name}的所有项目信息将被清空，且无法恢复`;
-      }
-      return '';
-    });
-
-    const resetIdx = () => {
-      deleteIdx.value = null;
-    };
-
-    const onConfirmDelete = () => {
-      // 真实业务请发起请求
-      // data.value.splice(deleteIdx.value, 1);
-
-      pagination.value.total = data.value.length;
-      confirmVisible.value = false;
-      MessagePlugin.success('删除成功');
-      resetIdx();
-    };
-
-    const onCancel = () => {
-      resetIdx();
-    };
-    const router = useRouter();
-    onMounted(() => {
-      fetchData();
-    });
-
-    return {
-      data,
-      COLUMNS,
-      PROJECT_STATUS,
-      formData,
-      pagination,
-      confirmVisible,
-      confirmBody,
-      ...tableConfig,
-      onConfirmDelete,
-      onCancel,
-      dataLoading,
-      handleClickDelete({ row }) {
-        deleteIdx.value = row;
-        confirmVisible.value = true;
-      },
-      onReset(val) {
-        console.log(val);
-      },
-      onSubmit(val) {
-        console.log(val);
-      },
-      rehandlePageChange(curr, pageInfo) {
-        console.log('分页变化', curr, pageInfo);
-      },
-      rehandleChange(changeParams, triggerAndData) {
-        console.log('统一Change', changeParams, triggerAndData);
-      },
-      rehandleClickOp({ text, row }) {
-        console.log(text, row);
-        router.push(`/project/${row.id}`);
-        // router.push('/project/add');
-      },
-      handleClickAdd() {
-        router.push('/project/add');
-      },
-    };
-  },
+const deleteIdx = ref(null);
+const confirmBody = computed(() => {
+  if (deleteIdx.value) {
+    const { name } = deleteIdx.value;
+    return `删除后，${name}的所有项目信息将被清空，且无法恢复`;
+  }
+  return '';
 });
+
+const resetIdx = () => {
+  deleteIdx.value = null;
+};
+
+const onConfirmDelete = () => {
+  // 真实业务请发起请求
+  // data.value.splice(deleteIdx.value, 1);
+
+  pagination.value.total = data.value.length;
+  confirmVisible.value = false;
+  MessagePlugin.success('删除成功');
+  resetIdx();
+};
+
+const onCancel = () => {
+  resetIdx();
+};
+const router = useRouter();
+onMounted(() => {
+  fetchData();
+});
+
+function handleClickDelete({ row }) {
+  deleteIdx.value = row;
+  confirmVisible.value = true;
+}
+function onReset(val) {
+  console.log(val);
+}
+function onSubmit(val) {
+  console.log(val);
+}
+function rehandlePageChange(curr, pageInfo) {
+  console.log('分页变化', curr, pageInfo);
+}
+
+function handleClickShow({ row }) {
+  console.log(row);
+  router.push({
+    name: 'projectShow',
+    params: {
+      projectId: row.id,
+    },
+  });
+}
+function handleClickAdd() {
+  router.push('/project/add');
+}
 </script>
 
 <style lang="less">

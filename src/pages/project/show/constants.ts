@@ -37,7 +37,7 @@ export const COLUMNS = [
   {
     align: 'left',
     fixed: 'right',
-    width: 100,
+    width: 190,
     colKey: 'op',
     title: '操作',
   },

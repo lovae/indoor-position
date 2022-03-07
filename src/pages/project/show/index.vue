@@ -12,15 +12,7 @@
     <div class="cont">
       <t-row :gutter="[20, 20]" justify="space-between">
         <t-col flex="1">
-          <t-table
-            :data="data"
-            row-key="id"
-            :hover="true"
-            :stripe="true"
-            :columns="COLUMNS"
-            class="table"
-            @rowClick="handleClickShow"
-          >
+          <t-table :data="data" row-key="id" :hover="true" :columns="COLUMNS" class="table" @rowClick="handleClickShow">
             <template #mapType="{ row }">
               <p>{{ MAP_TYPES[row.mapType] }}</p>
             </template>
@@ -28,14 +20,15 @@
               <t-tag :theme="FLOOR_STATUS[row.status].theme">{{ FLOOR_STATUS[row.status].value }}</t-tag>
             </template>
             <template #op="slotProps">
-              <!-- <t-button theme="primary" @click="handleClickShow"> 查看 </t-button> -->
-              <t-button type="reset" variant="base" theme="default" @click.stop="handleClickDelete(slotProps)">
+              <t-button variant="outline" theme="primary" size="small" @click.stop=""> 上线 </t-button>
+              <t-button variant="outline" theme="success" size="small" @click.stop=""> 审核 </t-button>
+              <t-button variant="base" size="small" theme="default" @click.stop="handleClickDelete(slotProps)">
                 删除
               </t-button>
             </template>
           </t-table>
         </t-col>
-        <t-col flex="360px">
+        <t-col flex="320px">
           <info-card :info="projectInfo"></info-card>
 
           <t-button class="fixed-r-b" shape="circle" theme="primary" variant="base" @click="handleClickAdd">
@@ -48,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from '@vue/reactivity';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 // import goBack from '@/components/goBack/index.vue';
 import infoCard from '../components/projectInfo.vue';
@@ -59,8 +52,13 @@ import { IFloor } from '@/service/api/floor/types';
 const route = useRoute();
 const router = useRouter();
 const { projectId } = route.params;
-console.log(projectId);
-
+onMounted(() => {
+  console.log(projectId);
+  console.log('项目详情');
+});
+onUnmounted(() => {
+  console.log('项目卸载');
+});
 const projectInfo = ref({
   id: '08e7d2e0-6847-11ec-99af-f93a3c42cf33',
   name: '室内定位',
@@ -172,6 +170,6 @@ const handleClickDelete = (row) => {
   border-radius: 4px;
   overflow: hidden;
   background-color: @bg-color-container;
-  box-shadow: @shadow-1;
+  // box-shadow: @shadow-1;
 }
 </style>

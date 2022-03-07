@@ -101,9 +101,10 @@ export default defineComponent({
 
     onMounted(() => {
       autoCollapsed();
-      window.onresize = () => {
-        autoCollapsed();
-      };
+      // 取消页面缩放折叠侧边栏
+      // window.onresize = () => {
+      //   autoCollapsed();
+      // };
     });
 
     const getActiveName = (maxLevel = 2) => {
@@ -125,7 +126,7 @@ export default defineComponent({
     };
 
     const goHome = () => {
-      router.push('/dashboard/base');
+      router.push('/dashboard');
     };
 
     return {

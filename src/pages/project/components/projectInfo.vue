@@ -8,9 +8,9 @@
         <t-tag :theme="PROJECT_STATUS[info.status].theme">{{ PROJECT_STATUS[info.status].value }}</t-tag>
       </t-col>
     </t-row>
-    <div class="id mt-1">{{ info.id }}</div>
+    <div class="id mt-2">{{ info.id }}</div>
     <div>{{ info.province }}·{{ info.city }} {{ info.address }}</div>
-    <t-divider class="my-1" dashed />
+    <t-divider class="my-2" dashed />
     <t-form label-width="80px">
       <t-form-item class="mb-0" label="采集人员">{{ info.surveyors }}</t-form-item>
       <t-form-item class="mb-0" label="审核人员">{{ info.auditors }}</t-form-item>
@@ -51,7 +51,7 @@ export default defineComponent({
   padding: 1rem;
   border-radius: 4px;
   background-color: @bg-color-container;
-  box-shadow: @shadow-1;
+  // box-shadow: @shadow-1;
 }
 .id {
   // color: @font-gray-3;

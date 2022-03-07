@@ -61,10 +61,13 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref, nextTick, Ref } from 'vue';
+// import { useRouter } from 'vue-router';
 import goBack from '@/components/goBack/index.vue';
 import { initMap, convertLngLat, initFloor, lineToPoints, initMarker, aryToPointData, initDraw } from '@/utils/mapUtil';
 import { getIndoorMap } from '@/service/api/indoormap';
 import request from '@/service/request';
+
+// const router = useRouter();
 
 // 间距控制
 const spacing: Ref<number> = ref(7);
@@ -221,6 +224,7 @@ const fetchData = async () => {
     console.log(e);
   } finally {
     // 做一些加载状态初始化等操作
+    history.back();
   }
 };
 // 监听地图容器尺寸，改变地图大小

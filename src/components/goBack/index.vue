@@ -1,5 +1,5 @@
 <template>
-  <div class="mc-back" @click="goBack"><t-icon :name="icon" :size="size"></t-icon>{{ title }}</div>
+  <div class="mc-back" @click="goBack"><t-icon :name="icon" :size="size"></t-icon>{{ title || '' }}</div>
 </template>
 
 <script lang="ts">
@@ -9,7 +9,7 @@ export default defineComponent({
   name: 'GoBack',
   props: {
     title: {
-      type: String as PropType<string>,
+      type: String || (Boolean as PropType<string | boolean>),
       default: '返回',
     },
     size: {
@@ -22,6 +22,7 @@ export default defineComponent({
     },
   },
   setup() {
+    // const emits =defineEmits(['click'])
     return {
       goBack() {
         history.back();
