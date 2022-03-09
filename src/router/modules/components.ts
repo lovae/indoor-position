@@ -5,8 +5,8 @@ import Layout from '@/layouts';
 
 export default [
   {
-    path: '/demo',
-    name: 'demo',
+    path: '/result',
+    name: 'result',
     meta: { title: '示例页', icon: 'layers', hide: true },
     component: Layout,
     children: [
