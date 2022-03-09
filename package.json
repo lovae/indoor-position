@@ -1,6 +1,6 @@
 {
   "name": "tdesign-vue-next-starter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "dev:mock": "vite --open --mode mock",
     "dev": "vite --open --mode development",
@@ -68,7 +68,7 @@
     "vite-plugin-mock": "^2.9.6",
     "vite-svg-loader": "^3.1.0",
     "vue-clipboard3": "^1.0.1",
-    "vue-tsc": "^0.29.8"
+    "vue-tsc": "^0.32.1"
   },
   "config": {
     "commitizen": {
