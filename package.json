@@ -16,7 +16,7 @@
   "dependencies": {
     "cz-conventional-changelog": "^3.3.0",
     "dayjs": "^1.10.6",
-    "echarts": "~5.1.2",
+    "echarts": "~5.4.1",
     "hex-to-hsl": "^1.0.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
